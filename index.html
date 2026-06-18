@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reward Hub · Vòng Quay Phần Thưởng</title>
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#f7f6f2" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet" />
+  
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-item active" data-page="studyhub"><i class="ph ph-graduation-cap"></i> Trung tâm Học tập</div>
+    <div class="sidebar-item" data-page="shop"><i class="ph ph-storefront"></i> Cửa hàng</div>
+    <div class="sidebar-item" data-page="history"><i class="ph ph-clock-counter-clockwise"></i> Lịch sử</div>
+    <div class="sidebar-item" data-page="settings"><i class="ph ph-sliders"></i> Cài đặt</div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main" id="app">
+    <div id="page-studyhub" class="page active">
+      <h1>Trung tâm Học tập</h1>
+
+      <!-- Motivation Panel -->
+      <div class="motivation-card" id="motivationCard">
+        <div class="motivation-head">
+          <span class="motivation-chip" id="quoteCategory">Tiếp sức</span>
+          <button class="icon-btn quote-refresh-btn" id="refreshQuoteBtn" title="Đổi câu động lực">
+            <i class="ph ph-arrow-clockwise"></i>
+          </button>
+        </div>
+        <div class="motivation-quote" id="quoteText">"Hãy luôn khao khát, hãy cứ dại khờ."</div>
+        <div class="motivation-author" id="quoteAuthor">Steve Jobs</div>
+      </div>
+
+      <!-- Progress & Stats -->
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <span>
+            <span class="section-kicker">Tổng tiến độ</span><br />
+            <strong>Mục tiêu 100 giờ</strong>
+          </span>
+          <span id="hoursDisplay">0 / 100 giờ</span>
+        </div>
+        <div class="progress-container">
+          <div class="progress-fill" id="progressFill" style="width:0%;"></div>
+        </div>
+        <div class="milestone-row">
+          <span>0h</span><span>20h</span><span>40h</span><span>60h</span><span>100h</span>
+        </div>
+        <div class="daily-progress-card">
+          <div class="daily-progress-header">
+            <div>
+              <span class="section-kicker">Tiến trình hôm nay</span>
+              <div class="daily-progress-title">Thanh học trong ngày</div>
+            </div>
+            <div class="daily-progress-meta" id="dailyProgressText">0 phút / 10 giờ</div>
+          </div>
+          <div class="progress-container progress-container-daily">
+            <div class="progress-fill progress-fill-daily" id="dailyProgressFill" style="width:0%;"></div>
+          </div>
+          <div class="daily-progress-caption" id="dailyProgressHint">Thanh này tự đặt lại mỗi ngày và vẫn tăng rõ ràng ngay từ 10-15 phút đầu tiên.</div>
+        </div>
+
+        <!-- Timer -->
+        <div class="timer-bar">
+          <div class="timer-display" id="timerDisplay">00:00:00</div>
+          <button class="btn" id="timerToggleBtn"><i class="ph ph-play"></i> Bắt đầu</button>
+          <button class="btn" id="timerResetBtn"><i class="ph ph-arrow-counter-clockwise"></i> Đặt lại</button>
+        </div>
+        <div class="timer-meta" id="sessionStatusText">Thời gian học được ghi nhận theo thời gian thực.</div>
+
+        <!-- Timer mode selection -->
+        <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:8px;">
+          <label style="display:flex; align-items:center; gap:6px; font-size:0.9rem;">
+            <input type="radio" name="timerMode" value="countup" checked> Đếm tiến
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; font-size:0.9rem;">
+            <input type="radio" name="timerMode" value="pomodoro"> Pomodoro
+          </label>
+          <span class="phase-label" id="phaseLabel">Học</span>
+          <span style="font-size:0.85rem; color:#6b6b67;" id="pomodoroConfig">25 / 5 phút</span>
+        </div>
+
+        <!-- Pomodoro config (hidden initially) -->
+        <div id="pomodoroSettings" style="display:none; margin-top:10px; gap:12px; flex-wrap:wrap; align-items:center;">
+          <label>Học (phút) <input type="number" id="pomodoroStudy" value="25" min="1" class="input-like" style="width:60px;" /></label>
+          <label>Nghỉ (phút) <input type="number" id="pomodoroBreak" value="5" min="1" class="input-like" style="width:60px;" /></label>
+          <button class="btn" id="applyPomodoroBtn">Áp dụng</button>
+        </div>
+
+        <div class="flex-row" style="margin-top:12px;">
+          <div class="stat-box"><div class="stat-label">Sao hiện có</div><div class="stat-value" id="starDisplay">0</div></div>
+          <div class="stat-box"><div class="stat-label">Vé quay</div><div class="stat-value" id="ticketDisplay">0</div></div>
+          <div class="stat-box"><div class="stat-label">Hôm nay</div><div class="stat-value" id="todayStudyDisplay">0p</div></div>
+          <div class="stat-box"><div class="stat-label">Streak ngày</div><div class="stat-value" id="streakDaysDisplay">0</div></div>
+          <div class="stat-box"><div class="stat-label">Tổng giờ</div><div class="stat-value" id="lifetimeHoursDisplay">0</div></div>
+        </div>
+
+        <!-- Active Effects -->
+        <div id="activeEffects" style="margin-top:12px; padding-top:12px; border-top:1px solid #efefec; display:flex; flex-wrap:wrap; gap:6px; min-height:30px;">
+          <!-- dynamically filled -->
+        </div>
+      </div>
+
+      <!-- REWARD VAULT -->
+      <div class="card">
+        <div class="vault-header">
+          <div class="vault-toggle" id="vaultToggle">
+            <i class="ph ph-caret-right"></i>
+            <span><strong>Kho phần thưởng</strong> <span id="vaultCount">(0)</span></span>
+          </div>
+          <span class="info-circle" id="vaultInfoBtn" title="Giải thích cơ chế">ⓘ</span>
+        </div>
+        <div class="vault-content" id="vaultContent">
+          <div id="rewardPoolList" style="margin:8px 0 12px;"></div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <input type="text" id="newRewardName" placeholder="Phần thưởng mới..." class="input-like" style="flex:1; min-width:150px;" />
+            <button class="btn btn-primary" id="addRewardBtn">Thêm</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- WHEEL (5x3) -->
+      <div class="card">
+        <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
+          <button class="btn btn-primary" id="prepareWheelBtn"><i class="ph ph-dice"></i> Chuẩn bị quay</button>
+          <button class="btn" id="confirmRevealBtn" disabled><i class="ph ph-check"></i> Xác nhận</button>
+          <span id="wheelStatus" style="font-size:0.9rem; color:#6b6b67;">Sẵn sàng</span>
+        </div>
+        <div class="wheel-wrapper">
+          <div class="wheel-grid" id="wheelGrid"></div>
+        </div>
+        <div style="display:flex; gap:12px; justify-content:center; margin-top:12px;">
+          <button class="btn" id="resetWheelBtn">Đặt lại bánh xe</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHOP -->
+    <div id="page-shop" class="page">
+      <h1>Cửa hàng</h1>
+      <div class="card">
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+          <input type="text" id="shopItemName" placeholder="Tên vật phẩm" class="input-like" />
+          <input type="number" id="shopItemCost" placeholder="Sao" class="input-like" style="width:100px;" />
+          <button class="btn btn-primary" id="addShopItemBtn">Thêm</button>
+        </div>
+        <div id="shopList"></div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="page-history" class="page">
+      <h1>Lịch sử</h1>
+      <div class="card" id="historyList"><div style="color:#8a8a85;">Chưa có lịch sử</div></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="page-settings" class="page">
+      <h1>Cài đặt</h1>
+      <div class="card" style="display:flex; flex-direction:column; gap:16px;">
+        <button class="btn" id="exportBtn"><i class="ph ph-file-export"></i> Xuất dữ liệu JSON</button>
+        <button class="btn" id="importBtn"><i class="ph ph-file-import"></i> Nhập dữ liệu JSON</button>
+        <input type="file" id="importFileInput" accept=".json" style="display:none;" />
+        <button class="btn" id="resetBtn" style="color:#a00;"><i class="ph ph-trash"></i> Xóa toàn bộ dữ liệu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- INFO MODAL (hidden by default) -->
+  <div id="infoModal" class="popup-overlay" style="display:none;">
+    <div class="popup-box">
+      <h3>📖 Giải thích cơ chế</h3>
+      <div style="font-size:0.95rem; line-height:1.6; color:#333; max-height:60vh; overflow-y:auto;">
+        <p><strong>⭐ Sao thường:</strong> <code>+1, +2, +3, +5</code> – phổ biến nhất.</p>
+        <p><strong>🎲 Random Stars:</strong> Nhận ngẫu nhiên từ 1 đến 5 sao.</p>
+        <p><strong>✨ Double Next Star:</strong> Lần nhận sao tiếp theo được nhân đôi.</p>
+        <p><strong>💥 Triple Next Star:</strong> Lần nhận sao tiếp theo được nhân ba.</p>
+        <p><strong>📦 Star Chest:</strong> Mở rương nhận ngẫu nhiên <code>+2, +3, +5, +8</code> sao.</p>
+        <p><strong>⚡ Star Rush:</strong> 3 lượt quay tiếp theo, mỗi lần nhận sao được cộng thêm +1.</p>
+        <p><strong>🍀 Lucky Day:</strong> Lượt quay tiếp theo có cơ hội cao hơn để ra sao lớn.</p>
+        <p><strong>🎫 Bonus Draw:</strong> Nhận thêm 1 vé quay.</p>
+        <p><strong>💎 Jackpot Stars:</strong> Nhận ngẫu nhiên từ 10 đến 20 sao.</p>
+        <p><strong>🎯 Lucky Gate:</strong> Khi trúng (10%), bạn sẽ được vào vòng quay may mắn với các ô:
+          <br><code>+45, +10, +5, +1, 0, -2, -6, -12, -20, -30</code>
+          <br>Mỗi lượt quay tốn 2 sao (có thể âm). Tối đa 3 lượt.</p>
+        <p><strong>⚠️ Hình phạt nhẹ:</strong> Khi nhận sao, có thể bị trừ 1 sao (Star Drain) với tỉ lệ 5%.</p>
+      </div>
+      <div style="text-align:center; margin-top:16px;">
+        <button class="btn btn-primary" id="closeInfoBtn">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main JavaScript -->
+  <script src="js/script.js"></script>
+</body>
+</html>
