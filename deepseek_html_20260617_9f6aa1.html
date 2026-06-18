@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reward Hub · Vòng Quay Phần Thưởng</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <style>
+    /* ===== RESET & GLOBAL ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #fafaf7;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #1e1e1e;
+      display: flex;
+      min-height: 100vh;
+      padding: 20px;
+      line-height: 1.5;
+    }
+    .sidebar {
+      width: 200px;
+      flex-shrink: 0;
+      padding: 24px 12px;
+      border-right: 1px solid #e8e8e5;
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      margin: 4px 0;
+      border-radius: 8px;
+      color: #2c2c2c;
+      font-weight: 450;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .sidebar-item i { width: 20px; font-size: 1.15rem; color: #3a3a3a; }
+    .sidebar-item.active { background: #eaeae6; }
+    .sidebar-item:hover { background: #f0f0eb; }
+
+    .main {
+      flex: 1;
+      padding: 10px 30px 40px;
+      max-width: 1100px;
+    }
+    .page { display: none; animation: fade 0.2s ease; }
+    .page.active { display: block; }
+    @keyframes fade { from { opacity: 0.4; } to { opacity: 1; } }
+
+    h1 { font-weight: 500; letter-spacing: -0.01em; font-size: 1.9rem; margin-bottom: 16px; }
+    .card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 20px 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02);
+      border: 1px solid #efefec;
+      margin-bottom: 24px;
+    }
+    .flex-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: center;
+    }
+    .stat-box {
+      background: #f6f6f2;
+      border-radius: 12px;
+      padding: 12px 20px;
+      min-width: 100px;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #6b6b67;
+    }
+    .stat-value {
+      font-size: 1.7rem;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    .progress-container {
+      width: 100%;
+      background: #eaeae6;
+      height: 10px;
+      border-radius: 20px;
+      margin: 12px 0 6px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 20px;
+      width: 0%;
+      transition: width 0.3s;
+      background: #e53e3e;
+    }
+    .milestone-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 20px;
+      font-size: 0.8rem;
+      color: #3f3f3c;
+      margin: 6px 0 4px;
+    }
+
+    .btn {
+      background: #f2f2ed;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-weight: 450;
+      font-size: 0.9rem;
+      color: #1a1a1a;
+      cursor: pointer;
+      transition: 0.1s;
+      border: 1px solid transparent;
+    }
+    .btn:hover { background: #e6e6e0; }
+    .btn-primary {
+      background: #1e1e1e;
+      color: white;
+    }
+    .btn-primary:hover { background: #333; }
+    .btn:disabled { opacity: 0.4; pointer-events: none; }
+    .input-like {
+      background: #f8f8f4;
+      border: 1px solid #e3e3dd;
+      border-radius: 30px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+    }
+    .input-like:focus { outline: 1px solid #b8b8b0; }
+
+    .reward-tag, .shop-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #f1f1ec;
+      padding: 6px 16px 6px 14px;
+      border-radius: 40px;
+      margin: 4px 6px 4px 0;
+      font-size: 0.9rem;
+    }
+    .icon-btn {
+      background: transparent;
+      border: none;
+      color: #5c5c57;
+      cursor: pointer;
+      padding: 0 4px;
+    }
+    .icon-btn:hover { color: #000; }
+
+    .vault-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      padding: 8px 0;
+    }
+    .vault-toggle i { transition: transform 0.2s; }
+    .vault-toggle.open i { transform: rotate(90deg); }
+    .vault-content { 
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, opacity 0.25s ease;
+      opacity: 0;
+    }
+    .vault-content.open {
+      max-height: 800px;
+      opacity: 1;
+    }
+    .vault-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .info-circle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid #b0b0a8;
+      color: #5c5c57;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+      background: transparent;
+      line-height: 1;
+    }
+    .info-circle:hover {
+      background: #eaeae6;
+      border-color: #1e1e1e;
+    }
+
+    .wheel-wrapper {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 10px;
+    }
+    .wheel-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      position: relative;
+    }
+    .cell {
+      background: #f6f6f2;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #e3e3dd;
+      transition: all 0.2s ease;
+      text-align: center;
+      padding: 8px;
+      aspect-ratio: 1/1;
+      cursor: default;
+      font-size: 0.85rem;
+      gap: 4px;
+      position: relative;
+    }
+    .cell .placeholder {
+      color: #b0b0a8;
+      font-size: 2rem;
+    }
+    .cell .placeholder i {
+      font-size: 2.2rem;
+      color: #c0c0b8;
+    }
+    .cell.jackpot {
+      background: #fff4cc;
+      border-width: 4px;
+      border-color: #1e1e1e;
+    }
+    .cell.jackpot .placeholder i {
+      color: #1e1e1e;
+    }
+    .cell.fade-out {
+      opacity: 0;
+      transform: scale(0.6);
+      pointer-events: none;
+      transition: 0.3s;
+    }
+    .cell.reveal {
+      background: #ffffff;
+      border-color: #d0d0c8;
+    }
+    .cell.reveal i {
+      font-size: 1.8rem;
+      color: #2c2c2c;
+    }
+    .cell.reveal .cell-label {
+      font-size: 0.7rem;
+      opacity: 0.7;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .cell.highlight {
+      border-color: #1e1e1e;
+      transform: scale(1.05);
+      box-shadow: 0 0 0 3px rgba(30,30,30,0.08);
+      background: #f0f0eb;
+      transition: all 0.08s ease;
+    }
+
+    .spin-center {
+      grid-column: 3;
+      grid-row: 2;
+      background: white;
+      border-radius: 50%;
+      border: 2px solid #e3e3dd;
+      aspect-ratio: 1/1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 2px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: 0.15s;
+      z-index: 5;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      width: 100%;
+      height: 100%;
+      min-height: 70px;
+    }
+    .spin-center:hover {
+      border-color: #1e1e1e;
+      background: #fafaf7;
+    }
+    .spin-center:disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .spin-center i {
+      font-size: 1.6rem;
+    }
+    .cell.empty {
+      background: transparent;
+      border: none;
+      pointer-events: none;
+    }
+
+    .toast-container {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .toast {
+      background: white;
+      border-radius: 14px;
+      padding: 16px 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+      border: 1px solid #eaeae6;
+      min-width: 200px;
+      animation: slideIn 0.3s ease;
+    }
+    .toast-title { font-weight: 600; font-size: 1rem; }
+    .toast-desc { font-size: 0.9rem; color: #4f4f4b; margin-top: 2px; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.12);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 150;
+    }
+    .popup-box {
+      background: white;
+      max-width: 480px;
+      width: 92%;
+      border-radius: 28px;
+      padding: 32px 28px;
+      box-shadow: 0 20px 48px rgba(0,0,0,0.06);
+      border: 1px solid #eaeae6;
+    }
+    .popup-box h3 { font-weight: 500; font-size: 1.4rem; margin-bottom: 8px; }
+
+    .lucky-wheel-container {
+      position: relative;
+      width: 100%;
+      max-width: 380px;
+      margin: 16px auto;
+      aspect-ratio: 1/1;
+    }
+    .lucky-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      gap: 8px;
+      width: 100%;
+      height: 100%;
+    }
+    .lucky-cell {
+      background: #f6f6f2;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #e3e3dd;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.1s ease;
+      padding: 4px;
+      text-align: center;
+    }
+    .lucky-cell.highlight {
+      border-color: #1e1e1e;
+      transform: scale(1.06);
+      box-shadow: 0 0 0 3px rgba(30,30,30,0.08);
+      background: #f0f0eb;
+    }
+    .lucky-cell.empty-cell {
+      background: transparent;
+      border: none;
+      pointer-events: none;
+    }
+    .lucky-center {
+      grid-column: 2 / 4;
+      grid-row: 2 / 4;
+      background: white;
+      border-radius: 50%;
+      border: 2px solid #e3e3dd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 2px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .lucky-center:hover { border-color: #1e1e1e; }
+    .lucky-center:disabled { opacity: 0.4; pointer-events: none; }
+
+    .history-item {
+      display: flex;
+      gap: 16px;
+      border-bottom: 1px solid #efefec;
+      padding: 12px 0;
+      font-size: 0.95rem;
+    }
+    .history-time { color: #6f6f6a; min-width: 100px; }
+
+    .timer-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 12px 0;
+    }
+    .timer-display {
+      font-feature-settings: "tnum";
+      font-size: 1.6rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .motivation-card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 24px 28px;
+      border: 1px solid #efefec;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .motivation-quote {
+      font-size: 1.25rem;
+      font-weight: 400;
+      color: #1e1e1e;
+      line-height: 1.6;
+    }
+    .motivation-author {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: #6b6b67;
+    }
+
+    .pomodoro-controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .pomodoro-controls label {
+      font-size: 0.85rem;
+      color: #4f4f4b;
+    }
+    .pomodoro-controls input {
+      width: 60px;
+    }
+    .phase-label {
+      font-weight: 500;
+      font-size: 0.9rem;
+      background: #f1f1ec;
+      padding: 4px 14px;
+      border-radius: 30px;
+    }
+
+    .buff-tag {
+      background: #f1f1ec;
+      padding: 4px 14px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      display: inline-block;
+      margin: 2px 4px;
+    }
+
+    @media (max-width: 700px) {
+      body { flex-direction: column; padding: 12px; }
+      .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e8e8e5; display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 0; position: static; }
+      .sidebar-item { padding: 6px 12px; }
+      .main { padding: 16px 6px; }
+      .wheel-grid { gap: 6px; }
+      .cell .placeholder i { font-size: 1.6rem; }
+      .spin-center { min-height: 50px; font-size: 0.7rem; }
+      .spin-center i { font-size: 1.2rem; }
+      .lucky-grid { gap: 4px; }
+      .lucky-cell { font-size: 0.7rem; }
+      .popup-box { padding: 20px 16px; }
+      .motivation-quote { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-item active" data-page="studyhub"><i class="ph ph-graduation-cap"></i> Trung tâm Học tập</div>
+    <div class="sidebar-item" data-page="shop"><i class="ph ph-storefront"></i> Cửa hàng</div>
+    <div class="sidebar-item" data-page="history"><i class="ph ph-clock-counter-clockwise"></i> Lịch sử</div>
+    <div class="sidebar-item" data-page="settings"><i class="ph ph-sliders"></i> Cài đặt</div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main" id="app">
+    <div id="page-studyhub" class="page active">
+      <h1>Trung tâm Học tập</h1>
+
+      <!-- Motivation Panel -->
+      <div class="motivation-card" id="motivationCard">
+        <div class="motivation-quote" id="quoteText">"Hãy đói, hãy khờ."</div>
+        <div class="motivation-author" id="quoteAuthor">Steve Jobs</div>
+      </div>
+
+      <!-- Progress & Stats -->
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+          <span><strong>Tiến độ tuần</strong></span>
+          <span id="hoursDisplay">0 / 100 giờ</span>
+        </div>
+        <div class="progress-container">
+          <div class="progress-fill" id="progressFill" style="width:0%;"></div>
+        </div>
+        <div class="milestone-row">
+          <span>0h</span><span>20h</span><span>40h</span><span>60h</span><span>100h</span>
+        </div>
+
+        <!-- Timer -->
+        <div class="timer-bar">
+          <div class="timer-display" id="timerDisplay">00:00:00</div>
+          <button class="btn" id="timerToggleBtn"><i class="ph ph-play"></i> Bắt đầu</button>
+          <button class="btn" id="timerResetBtn"><i class="ph ph-arrow-counter-clockwise"></i> Đặt lại</button>
+        </div>
+
+        <!-- Timer mode selection -->
+        <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:8px;">
+          <label style="display:flex; align-items:center; gap:6px; font-size:0.9rem;">
+            <input type="radio" name="timerMode" value="countup" checked> Đếm tiến
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; font-size:0.9rem;">
+            <input type="radio" name="timerMode" value="pomodoro"> Pomodoro
+          </label>
+          <span class="phase-label" id="phaseLabel">Học</span>
+          <span style="font-size:0.85rem; color:#6b6b67;" id="pomodoroConfig">25 / 5 phút</span>
+        </div>
+
+        <!-- Pomodoro config (hidden initially) -->
+        <div id="pomodoroSettings" style="display:none; margin-top:10px; gap:12px; flex-wrap:wrap; align-items:center;">
+          <label>Học (phút) <input type="number" id="pomodoroStudy" value="25" min="1" class="input-like" style="width:60px;" /></label>
+          <label>Nghỉ (phút) <input type="number" id="pomodoroBreak" value="5" min="1" class="input-like" style="width:60px;" /></label>
+          <button class="btn" id="applyPomodoroBtn">Áp dụng</button>
+        </div>
+
+        <div class="flex-row" style="margin-top:12px;">
+          <div class="stat-box"><div class="stat-label">Sao hiện có</div><div class="stat-value" id="starDisplay">0</div></div>
+          <div class="stat-box"><div class="stat-label">Vé quay</div><div class="stat-value" id="ticketDisplay">0</div></div>
+          <div class="stat-box"><div class="stat-label">Streak ngày</div><div class="stat-value" id="streakDaysDisplay">0</div></div>
+          <div class="stat-box"><div class="stat-label">Tổng giờ</div><div class="stat-value" id="lifetimeHoursDisplay">0</div></div>
+        </div>
+
+        <!-- Active Effects -->
+        <div id="activeEffects" style="margin-top:12px; padding-top:12px; border-top:1px solid #efefec; display:flex; flex-wrap:wrap; gap:6px; min-height:30px;">
+          <!-- dynamically filled -->
+        </div>
+      </div>
+
+      <!-- REWARD VAULT -->
+      <div class="card">
+        <div class="vault-header">
+          <div class="vault-toggle" id="vaultToggle">
+            <i class="ph ph-caret-right"></i>
+            <span><strong>Kho phần thưởng</strong> <span id="vaultCount">(0)</span></span>
+          </div>
+          <span class="info-circle" id="vaultInfoBtn" title="Giải thích cơ chế">ⓘ</span>
+        </div>
+        <div class="vault-content" id="vaultContent">
+          <div id="rewardPoolList" style="margin:8px 0 12px;"></div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <input type="text" id="newRewardName" placeholder="Phần thưởng mới..." class="input-like" style="flex:1; min-width:150px;" />
+            <button class="btn btn-primary" id="addRewardBtn">Thêm</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- WHEEL (5x3) -->
+      <div class="card">
+        <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
+          <button class="btn btn-primary" id="prepareWheelBtn"><i class="ph ph-dice"></i> Chuẩn bị quay</button>
+          <button class="btn" id="confirmRevealBtn" disabled><i class="ph ph-check"></i> Xác nhận</button>
+          <span id="wheelStatus" style="font-size:0.9rem; color:#6b6b67;">Sẵn sàng</span>
+        </div>
+        <div class="wheel-wrapper">
+          <div class="wheel-grid" id="wheelGrid"></div>
+        </div>
+        <div style="display:flex; gap:12px; justify-content:center; margin-top:12px;">
+          <button class="btn" id="resetWheelBtn">Đặt lại bánh xe</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHOP -->
+    <div id="page-shop" class="page">
+      <h1>Cửa hàng</h1>
+      <div class="card">
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+          <input type="text" id="shopItemName" placeholder="Tên vật phẩm" class="input-like" />
+          <input type="number" id="shopItemCost" placeholder="Sao" class="input-like" style="width:100px;" />
+          <button class="btn btn-primary" id="addShopItemBtn">Thêm</button>
+        </div>
+        <div id="shopList"></div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="page-history" class="page">
+      <h1>Lịch sử</h1>
+      <div class="card" id="historyList"><div style="color:#8a8a85;">Chưa có lịch sử</div></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="page-settings" class="page">
+      <h1>Cài đặt</h1>
+      <div class="card" style="display:flex; flex-direction:column; gap:16px;">
+        <button class="btn" id="exportBtn"><i class="ph ph-file-export"></i> Xuất dữ liệu JSON</button>
+        <button class="btn" id="importBtn"><i class="ph ph-file-import"></i> Nhập dữ liệu JSON</button>
+        <input type="file" id="importFileInput" accept=".json" style="display:none;" />
+        <button class="btn" id="resetBtn" style="color:#a00;"><i class="ph ph-trash"></i> Xóa toàn bộ dữ liệu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- INFO MODAL (hidden by default) -->
+  <div id="infoModal" class="popup-overlay" style="display:none;">
+    <div class="popup-box">
+      <h3>📖 Giải thích cơ chế</h3>
+      <div style="font-size:0.95rem; line-height:1.6; color:#333; max-height:60vh; overflow-y:auto;">
+        <p><strong>⭐ Sao thường:</strong> <code>+1, +2, +3, +5</code> – phổ biến nhất.</p>
+        <p><strong>🎲 Random Stars:</strong> Nhận ngẫu nhiên từ 1 đến 5 sao.</p>
+        <p><strong>✨ Double Next Star:</strong> Lần nhận sao tiếp theo được nhân đôi.</p>
+        <p><strong>💥 Triple Next Star:</strong> Lần nhận sao tiếp theo được nhân ba.</p>
+        <p><strong>📦 Star Chest:</strong> Mở rương nhận ngẫu nhiên <code>+2, +3, +5, +8</code> sao.</p>
+        <p><strong>⚡ Star Rush:</strong> 3 lượt quay tiếp theo, mỗi lần nhận sao được cộng thêm +1.</p>
+        <p><strong>🍀 Lucky Day:</strong> Lượt quay tiếp theo có cơ hội cao hơn để ra sao lớn.</p>
+        <p><strong>🎫 Bonus Draw:</strong> Nhận thêm 1 vé quay.</p>
+        <p><strong>💎 Jackpot Stars:</strong> Nhận ngẫu nhiên từ 10 đến 20 sao.</p>
+        <p><strong>🎯 Lucky Gate:</strong> Khi trúng (10%), bạn sẽ được vào vòng quay may mắn với các ô:
+          <br><code>+45, +10, +5, +1, 0, -2, -6, -12, -20, -30</code>
+          <br>Mỗi lượt quay tốn 2 sao (có thể âm). Tối đa 3 lượt.</p>
+        <p><strong>⚠️ Hình phạt nhẹ:</strong> Khi nhận sao, có thể bị trừ 1 sao (Star Drain) với tỉ lệ 5%.</p>
+      </div>
+      <div style="text-align:center; margin-top:16px;">
+        <button class="btn btn-primary" id="closeInfoBtn">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ================================================================
+    // DATA LAYER
+    // ================================================================
+    const STORAGE_KEY = 'rewardRouletteData';
+    function getDefaultData() {
+      const defaultRewards = [
+        'Coffee', 'Snack', 'Game 10m', 'Game 20m', 'YouTube',
+        'Read Book', 'Walk', 'Movie Episode', 'Music',
+        '+1 Star', '+2 Stars', '+3 Stars', '+5 Stars',
+        'Random Stars', 'Double Next Star', 'Triple Next Star',
+        'Star Chest', 'Star Rush', 'Lucky Day', 'Bonus Draw', 'Jackpot Stars',
+        'Stretch', 'Chat', 'Journal', 'Plant', 'Bath',
+        'Cake', 'Tea', 'Photo', 'Podcast', 'Puzzle',
+        'Exercise', 'Brain Game', 'Doodle', 'Magazine',
+        'Sunlight', 'Night Walk', 'Hydrate', 'Chocolate',
+        'Cozy Socks', 'Candle', 'Piano', 'Notebook',
+        'Pen', 'Letter', 'Comedy', 'Laundry', 'Clean'
+      ];
+      return {
+        hours: 0,
+        stars: 0,
+        streak: 0,        // streak hiện tại (liên tục có hoạt động)
+        streakDays: 0,    // số ngày liên tiếp đạt ≥1h
+        lastStudyDate: null, // ngày cuối cùng đạt 1h (định dạng YYYY-MM-DD)
+        lifetimeStars: 0,
+        lifetimeRewards: 0,
+        lifetimeHours: 0,
+        drawTickets: 0,   // mặc định 0 vé quay
+        rewards: defaultRewards.map(name => ({ id: 'r' + Date.now() + Math.random().toString(36).substr(2,4), name })),
+        shopItems: [
+          { id: 's1', name: 'Đồ uống yêu thích', cost: 10, lastRedeemed: null },
+          { id: 's2', name: 'Đồ ăn vặt', cost: 15, lastRedeemed: null },
+          { id: 's3', name: 'Ăn ngoài', cost: 25, lastRedeemed: null },
+          { id: 's4', name: 'Mua sách', cost: 50, lastRedeemed: null },
+          { id: 's5', name: 'Mua linh kiện robot', cost: 80, lastRedeemed: null },
+          { id: 's6', name: 'Món đồ công nghệ nhỏ', cost: 150, lastRedeemed: null }
+        ],
+        history: [],
+        purchaseHistory: [],
+        // Lucky Gate state
+        luckyGateSpinsLeft: 0,
+        timerSeconds: 0,
+        timerRunning: false,
+        timerPaused: false,
+        sessionStart: null,
+        elapsedSeconds: 0,
+        // Pomodoro
+        pomodoroStudy: 25,
+        pomodoroBreak: 5,
+        pomodoroPhase: 'study',
+        pomodoroRemaining: 25 * 60,
+        pomodoroActive: false,
+        // Buffs
+        doubleNextStar: false,
+        tripleNextStar: false,
+        starRushCount: 0,
+        luckyDay: false,
+        // wheel state
+        wheelItems: [],
+        wheelRevealed: false,
+        wheelPhase: 'idle',
+        removedCount: 0,
+        wheelResult: null,
+      };
+    }
+
+    let data = loadData();
+    function loadData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const def = getDefaultData();
+          for (let key in def) {
+            if (!(key in parsed)) parsed[key] = def[key];
+          }
+          return parsed;
+        }
+      } catch (e) { console.warn('load error', e); }
+      return getDefaultData();
+    }
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function genId() { return Date.now() + '-' + Math.random().toString(36).substr(2, 6); }
+    function addHistory(entry) {
+      data.history.unshift({ time: new Date().toLocaleString('vi-VN'), ...entry });
+      if (data.history.length > 300) data.history = data.history.slice(0, 300);
+      saveData();
+    }
+    function addPurchaseHistory(itemName, cost) {
+      data.purchaseHistory.unshift({
+        time: new Date().toLocaleString('vi-VN'),
+        name: itemName,
+        cost: cost
+      });
+      if (data.purchaseHistory.length > 200) data.purchaseHistory = data.purchaseHistory.slice(0, 200);
+      saveData();
+    }
+
+    // ================================================================
+    // TOAST
+    // ================================================================
+    function showToast(title, desc) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `<div class="toast-title">${title}</div><div class="toast-desc">${desc}</div>`;
+      container.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+    }
+
+    // ================================================================
+    // MOTIVATION QUOTES (Vietnamese)
+    // ================================================================
+    const quotes = [
+      { text: "Hãy đói, hãy khờ.", author: "Steve Jobs" },
+      { text: "Cách tốt nhất để dự đoán tương lai là tạo ra nó.", author: "Alan Kay" },
+      { text: "Sự kiên trì rất quan trọng. Bạn không nên bỏ cuộc trừ khi bị ép buộc.", author: "Elon Musk" },
+      { text: "Thành công là một người thầy tồi. Nó khiến người thông minh nghĩ rằng họ không thể thua.", author: "Bill Gates" },
+      { text: "Di chuyển nhanh và xây dựng mọi thứ.", author: "Mark Zuckerberg" },
+      { text: "Những khách hàng không hài lòng nhất của bạn là nguồn học hỏi lớn nhất.", author: "Bill Gates" },
+      { text: "Những người đủ điên rồ để nghĩ rằng họ có thể thay đổi thế giới mới là người làm được điều đó.", author: "Steve Jobs" }
+    ];
+
+    function updateMotivation() {
+      const idx = Math.floor(Math.random() * quotes.length);
+      document.getElementById('quoteText').textContent = `"${quotes[idx].text}"`;
+      document.getElementById('quoteAuthor').textContent = quotes[idx].author;
+    }
+
+    // ================================================================
+    // RANDOM STAR MODIFIER
+    // ================================================================
+    function applyRandomStarModifier(amount) {
+      if (amount <= 0) return { amount, message: '' };
+      const roll = Math.random();
+      let newAmount = amount;
+      let message = '';
+      if (roll < 0.05) { // 5%: Star Drain (penalty)
+        newAmount = Math.max(0, amount - 1);
+        message = `💧 Mất 1 sao (phạt nhẹ)`;
+      } else if (roll < 0.15) { // 10%: Star Surge (1.5x)
+        newAmount = Math.round(amount * 1.5);
+        message = `⚡ Bùng nổ sao: x1.5!`;
+      } else if (roll < 0.30) { // 15%: Bonus Star (+1)
+        newAmount = amount + 1;
+        message = `✨ Thêm 1 sao thưởng!`;
+      } else {
+        // no event
+        message = '';
+      }
+      return { amount: newAmount, message };
+    }
+
+    // ================================================================
+    // RENDER HELPERS
+    // ================================================================
+    function updateDashboard() {
+      const pct = Math.min(100, (data.hours / 100) * 100);
+      document.getElementById('hoursDisplay').textContent = `${data.hours} / 100 giờ`;
+      const fill = document.getElementById('progressFill');
+      fill.style.width = pct + '%';
+      let color = '#e53e3e';
+      if (pct >= 60) color = '#22C55E';
+      else if (pct >= 40) color = '#ed8936';
+      else if (pct >= 20) color = '#ecc94b';
+      fill.style.background = color;
+      document.getElementById('starDisplay').textContent = data.stars;
+      document.getElementById('ticketDisplay').textContent = data.drawTickets;
+      document.getElementById('streakDaysDisplay').textContent = data.streakDays;
+      document.getElementById('lifetimeHoursDisplay').textContent = data.lifetimeHours;
+      document.getElementById('vaultCount').textContent = `(${data.rewards.length})`;
+
+      // Timer display - use real elapsed time
+      let displaySeconds = data.timerSeconds;
+      if (data.timerRunning && data.sessionStart) {
+        const now = Date.now();
+        const elapsed = Math.floor((now - data.sessionStart) / 1000);
+        displaySeconds = data.elapsedSeconds + elapsed;
+      }
+      const h = String(Math.floor(displaySeconds / 3600)).padStart(2,'0');
+      const m = String(Math.floor((displaySeconds % 3600) / 60)).padStart(2,'0');
+      const s = String(displaySeconds % 60).padStart(2,'0');
+      document.getElementById('timerDisplay').textContent = `${h}:${m}:${s}`;
+      const btn = document.getElementById('timerToggleBtn');
+      if (data.timerRunning) btn.innerHTML = '<i class="ph ph-pause"></i> Tạm dừng';
+      else btn.innerHTML = '<i class="ph ph-play"></i> Bắt đầu';
+
+      // Pomodoro display
+      const mode = document.querySelector('input[name="timerMode"]:checked').value;
+      if (mode === 'pomodoro') {
+        const remaining = data.pomodoroRemaining;
+        const mins = String(Math.floor(remaining / 60)).padStart(2,'0');
+        const secs = String(remaining % 60).padStart(2,'0');
+        document.getElementById('timerDisplay').textContent = `${mins}:${secs}`;
+        document.getElementById('phaseLabel').textContent = data.pomodoroPhase === 'study' ? 'Học' : 'Nghỉ';
+      }
+
+      // Active Effects
+      renderActiveEffects();
+    }
+
+    function renderActiveEffects() {
+      const container = document.getElementById('activeEffects');
+      let buffs = [];
+      if (data.doubleNextStar) buffs.push('×2 Sao tiếp theo');
+      if (data.tripleNextStar) buffs.push('×3 Sao tiếp theo');
+      if (data.starRushCount > 0) buffs.push(`Star Rush (còn ${data.starRushCount} lượt)`);
+      if (data.luckyDay) buffs.push('Ngày may mắn');
+      if (buffs.length === 0) {
+        container.innerHTML = '<span style="color:#8a8a85; font-size:0.85rem;">Không có hiệu ứng đặc biệt</span>';
+      } else {
+        container.innerHTML = buffs.map(b => `<span class="buff-tag">${b}</span>`).join('');
+      }
+    }
+
+    function renderShop() {
+      const container = document.getElementById('shopList');
+      if (!data.shopItems.length) { container.innerHTML = '<div style="color:#8a8a85;">Chưa có vật phẩm</div>'; return; }
+      container.innerHTML = data.shopItems.map(item => {
+        const last = item.lastRedeemed ? `Lần cuối: ${item.lastRedeemed}` : 'Chưa đổi';
+        return `
+        <div class="shop-item" style="display:flex; justify-content:space-between; margin:6px 0; background:#f6f6f2; padding:10px 16px; border-radius:40px; flex-wrap:wrap;">
+          <span>${item.name} <span style="color:#5c5c57;">— ${item.cost} ⭐</span>
+            <span style="font-size:0.7rem; color:#888; margin-left:8px;">${last}</span>
+          </span>
+          <span>
+            <button class="icon-btn" data-shop-buy="${item.id}"><i class="ph ph-shopping-cart"></i></button>
+            <button class="icon-btn" data-shop-edit="${item.id}"><i class="ph ph-pencil"></i></button>
+            <button class="icon-btn" data-shop-del="${item.id}"><i class="ph ph-x"></i></button>
+          </span>
+        </div>
+      `}).join('');
+      container.querySelectorAll('[data-shop-buy]').forEach(el => {
+        el.onclick = () => buyShopItem(el.dataset.shopBuy);
+      });
+      container.querySelectorAll('[data-shop-edit]').forEach(el => {
+        el.onclick = () => {
+          const id = el.dataset.shopEdit;
+          const item = data.shopItems.find(i => i.id === id);
+          if (!item) return;
+          const newName = prompt('Sửa tên vật phẩm', item.name);
+          if (newName !== null) item.name = newName || item.name;
+          const newCost = prompt('Sửa giá sao', item.cost);
+          if (newCost !== null) { const c = parseInt(newCost); if (!isNaN(c)) item.cost = c; }
+          saveData(); renderShop(); updateDashboard();
+        };
+      });
+      container.querySelectorAll('[data-shop-del]').forEach(el => {
+        el.onclick = () => {
+          if (confirm('Xóa vật phẩm này?')) {
+            data.shopItems = data.shopItems.filter(i => i.id !== el.dataset.shopDel);
+            saveData(); renderShop(); updateDashboard();
+          }
+        };
+      });
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('historyList');
+      let html = '';
+      if (data.purchaseHistory.length) {
+        html += `<h3 style="margin:12px 0 8px; font-weight:500;">Lịch sử mua</h3>`;
+        data.purchaseHistory.slice(0, 20).forEach(h => {
+          html += `<div class="history-item"><span class="history-time">${h.time}</span><span>🛒 ${h.name} — ${h.cost} ⭐</span></div>`;
+        });
+      }
+      if (data.history.length) {
+        html += `<h3 style="margin:12px 0 8px; font-weight:500;">Hoạt động</h3>`;
+        data.history.slice(0, 30).forEach(h => {
+          html += `<div class="history-item"><span class="history-time">${h.time}</span><span>${h.text || h.type || 'sự kiện'}</span></div>`;
+        });
+      }
+      if (!html) html = '<div style="color:#8a8a85;">Chưa có lịch sử</div>';
+      container.innerHTML = html;
+    }
+
+    function renderRewardPool() {
+      const container = document.getElementById('rewardPoolList');
+      if (!data.rewards.length) { container.innerHTML = '<div style="color:#8a8a85;">Chưa có phần thưởng</div>'; return; }
+      container.innerHTML = data.rewards.map(r => `
+        <span class="reward-tag">
+          ${r.name}
+          <button class="icon-btn" data-reward-edit="${r.id}"><i class="ph ph-pencil"></i></button>
+          <button class="icon-btn" data-reward-del="${r.id}"><i class="ph ph-x"></i></button>
+        </span>
+      `).join('');
+      container.querySelectorAll('[data-reward-edit]').forEach(el => {
+        el.onclick = () => {
+          const id = el.dataset.rewardEdit;
+          const r = data.rewards.find(i => i.id === id);
+          if (!r) return;
+          const newName = prompt('Sửa phần thưởng', r.name);
+          if (newName !== null) r.name = newName || r.name;
+          saveData(); renderRewardPool(); updateDashboard();
+        };
+      });
+      container.querySelectorAll('[data-reward-del]').forEach(el => {
+        el.onclick = () => {
+          if (confirm('Xóa phần thưởng này?')) {
+            data.rewards = data.rewards.filter(i => i.id !== el.dataset.rewardDel);
+            saveData(); renderRewardPool(); updateDashboard();
+          }
+        };
+      });
+    }
+
+    // ================================================================
+    // STREAK DAYS UPDATE
+    // ================================================================
+    function updateStreakDays() {
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+      // Check if today already counted
+      if (data.lastStudyDate === today) return;
+
+      // If lastStudyDate is yesterday, continue streak
+      if (data.lastStudyDate) {
+        const last = new Date(data.lastStudyDate);
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
+        if (data.lastStudyDate === yesterdayStr) {
+          // consecutive day
+          data.streakDays += 1;
+        } else {
+          // gap -> reset streak
+          data.streakDays = 0;
+        }
+      } else {
+        // first time
+        data.streakDays = 0;
+      }
+      data.lastStudyDate = today;
+      saveData();
+      updateDashboard();
+    }
+
+    // ================================================================
+    // WHEEL (5x3)
+    // ================================================================
+    function buildWheelGrid() {
+      const grid = document.getElementById('wheelGrid');
+      grid.innerHTML = '';
+      const positions = [];
+      for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 5; c++) {
+          positions.push({ row: r, col: c });
+        }
+      }
+      positions.forEach((pos, idx) => {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        if (pos.row === 1 && pos.col === 2) {
+          cell.className = 'spin-center';
+          cell.id = 'spinCenterBtn';
+          cell.innerHTML = `<i class="ph ph-arrow-clockwise"></i> QUAY`;
+          cell.disabled = true;
+          cell.style.cursor = 'pointer';
+          cell.onclick = () => spinWheel();
+          grid.appendChild(cell);
+          return;
+        }
+        if (pos.row === 1 && (pos.col === 1 || pos.col === 3)) {
+          cell.className = 'cell empty';
+          grid.appendChild(cell);
+          return;
+        }
+        cell.dataset.idx = idx;
+        cell.innerHTML = `<span class="placeholder"><i class="ph ph-question"></i></span>`;
+        if (idx === 0) {
+          cell.classList.add('jackpot');
+          cell.title = 'Lucky Gate · 10%';
+        }
+        grid.appendChild(cell);
+      });
+    }
+
+    let wheelItems = [];
+    let wheelPhase = 'idle';
+    let removedCount = 0;
+    let highlightInterval = null;
+
+    function prepareWheel() {
+      if (data.rewards.length < 11) {
+        alert('Cần ít nhất 11 phần thưởng trong kho.');
+        return;
+      }
+      if (data.drawTickets < 1) {
+        alert('Bạn cần 1 vé quay. Học 1 giờ để nhận vé.');
+        return;
+      }
+      data.drawTickets -= 1;
+      saveData();
+      updateDashboard();
+
+      wheelPhase = 'selecting';
+      document.getElementById('wheelStatus').textContent = 'Đang chọn phần thưởng...';
+      document.getElementById('confirmRevealBtn').disabled = true;
+
+      const shuffled = [...data.rewards].sort(() => Math.random() - 0.5);
+      const picked = shuffled.slice(0, 11);
+      wheelItems = ['Lucky Gate', ...picked.map(r => r.name)];
+
+      const grid = document.getElementById('wheelGrid');
+      const cells = grid.querySelectorAll('.cell:not(.spin-center):not(.empty)');
+      cells.forEach((c, i) => {
+        c.className = 'cell';
+        if (i === 0) c.classList.add('jackpot');
+        c.innerHTML = `<span class="placeholder"><i class="ph ph-question"></i></span>`;
+        c.style.cursor = 'pointer';
+        c.onclick = () => handleCellClick(i);
+      });
+
+      document.getElementById('wheelStatus').textContent = 'Chọn 2 phần thưởng để loại bỏ (Lucky Gate không thể xóa)';
+      wheelPhase = 'remove';
+      removedCount = 0;
+      data.wheelRevealed = false;
+      data.wheelResult = null;
+      saveData();
+      document.getElementById('confirmRevealBtn').disabled = true;
+      const spinBtn = document.getElementById('spinCenterBtn');
+      if (spinBtn) spinBtn.disabled = true;
+    }
+
+    function handleCellClick(idx) {
+      if (wheelPhase !== 'remove') return;
+      if (idx === 0) { alert('Lucky Gate không thể xóa.'); return; }
+      const grid = document.getElementById('wheelGrid');
+      const cells = grid.querySelectorAll('.cell:not(.spin-center):not(.empty)');
+      const cell = cells[idx];
+      if (cell.classList.contains('fade-out')) return;
+      cell.classList.add('fade-out');
+      removedCount++;
+      if (removedCount >= 2) {
+        wheelPhase = 'ready-reveal';
+        document.getElementById('wheelStatus').textContent = 'Nhấn "Xác nhận" để lật các ô';
+        document.getElementById('confirmRevealBtn').disabled = false;
+      }
+    }
+
+    function confirmReveal() {
+      if (wheelPhase !== 'ready-reveal') return;
+      wheelPhase = 'revealing';
+      document.getElementById('confirmRevealBtn').disabled = true;
+      document.getElementById('wheelStatus').textContent = 'Đang lật...';
+      const grid = document.getElementById('wheelGrid');
+      const cells = grid.querySelectorAll('.cell:not(.spin-center):not(.empty)');
+      let idx = 0;
+      const interval = setInterval(() => {
+        if (idx >= cells.length) {
+          clearInterval(interval);
+          wheelPhase = 'revealed';
+          data.wheelRevealed = true;
+          document.getElementById('wheelStatus').textContent = 'Sẵn sàng quay!';
+          const spinBtn = document.getElementById('spinCenterBtn');
+          if (spinBtn) spinBtn.disabled = false;
+          return;
+        }
+        const cell = cells[idx];
+        if (!cell.classList.contains('fade-out')) {
+          cell.className = 'cell reveal';
+          if (idx === 0) cell.classList.add('jackpot');
+          const name = wheelItems[idx] || '?';
+          const iconMap = getIconForReward(name);
+          cell.innerHTML = `<i class="${iconMap}"></i><span class="cell-label">${name}</span>`;
+          cell.style.transform = 'scale(0.8)';
+          cell.style.opacity = '0';
+          setTimeout(() => {
+            cell.style.transform = 'scale(1)';
+            cell.style.opacity = '1';
+          }, 50);
+        }
+        idx++;
+      }, 300);
+    }
+
+    function getIconForReward(name) {
+      const lower = name.toLowerCase();
+      if (lower.includes('coffee')) return 'ph ph-coffee';
+      if (lower.includes('snack') || lower.includes('cake') || lower.includes('chocolate')) return 'ph ph-bowl-food';
+      if (lower.includes('game')) return 'ph ph-game-controller';
+      if (lower.includes('youtube')) return 'ph ph-youtube-logo';
+      if (lower.includes('book') || lower.includes('read')) return 'ph ph-book';
+      if (lower.includes('walk')) return 'ph ph-walking';
+      if (lower.includes('movie') || lower.includes('episode')) return 'ph ph-film-slate';
+      if (lower.includes('music') || lower.includes('piano')) return 'ph ph-music-notes';
+      if (lower.includes('star')) return 'ph ph-star';
+      if (lower.includes('stretch') || lower.includes('exercise')) return 'ph ph-dumbbell';
+      if (lower.includes('chat') || lower.includes('letter')) return 'ph ph-chat';
+      if (lower.includes('journal') || lower.includes('notebook') || lower.includes('pen')) return 'ph ph-notebook';
+      if (lower.includes('plant')) return 'ph ph-plant';
+      if (lower.includes('bath')) return 'ph ph-bathtub';
+      if (lower.includes('tea')) return 'ph ph-tea-bag';
+      if (lower.includes('photo')) return 'ph ph-camera';
+      if (lower.includes('podcast')) return 'ph ph-microphone';
+      if (lower.includes('puzzle')) return 'ph ph-puzzle-piece';
+      if (lower.includes('doodle')) return 'ph ph-palette';
+      if (lower.includes('magazine')) return 'ph ph-newspaper';
+      if (lower.includes('sunlight')) return 'ph ph-sun';
+      if (lower.includes('night')) return 'ph ph-moon';
+      if (lower.includes('hydrate')) return 'ph ph-drop';
+      if (lower.includes('socks')) return 'ph ph-sock';
+      if (lower.includes('candle')) return 'ph ph-candle';
+      if (lower.includes('comedy')) return 'ph ph-smiley';
+      if (lower.includes('laundry') || lower.includes('clean')) return 'ph ph-broom';
+      if (lower.includes('lucky gate')) return 'ph ph-gem';
+      return 'ph ph-gift';
+    }
+
+    // ================================================================
+    // SPIN (highlight running)
+    // ================================================================
+    function spinWheel() {
+      if (wheelPhase !== 'revealed' || data.wheelRevealed !== true) return;
+      const grid = document.getElementById('wheelGrid');
+      const cells = grid.querySelectorAll('.cell:not(.spin-center):not(.empty):not(.fade-out)');
+      if (cells.length < 2) { alert('Không đủ phần thưởng.'); return; }
+
+      const spinBtn = document.getElementById('spinCenterBtn');
+      if (spinBtn) spinBtn.disabled = true;
+      document.getElementById('wheelStatus').textContent = 'Đang quay...';
+      wheelPhase = 'spinning';
+
+      let currentIdx = 0;
+      let speed = 50;
+      let totalSteps = 0;
+      const minRounds = 5;
+      const stopIdx = Math.floor(Math.random() * cells.length);
+      const extra = Math.floor(Math.random() * cells.length);
+      const maxSteps = minRounds * cells.length + stopIdx + extra;
+
+      function highlightStep() {
+        cells.forEach(c => c.classList.remove('highlight'));
+        const cell = cells[currentIdx % cells.length];
+        cell.classList.add('highlight');
+        totalSteps++;
+        if (totalSteps >= maxSteps) {
+          clearInterval(highlightInterval);
+          wheelPhase = 'done';
+          document.getElementById('wheelStatus').textContent = 'Hoàn tất!';
+          if (spinBtn) spinBtn.disabled = false;
+          const resultName = cell.querySelector('.cell-label')?.textContent || 'Reward';
+          data.wheelResult = resultName;
+          saveData();
+          handleWheelResult(resultName);
+          return;
+        }
+        if (totalSteps > minRounds * cells.length) {
+          const progress = (totalSteps - minRounds * cells.length) / (maxSteps - minRounds * cells.length);
+          speed = 50 + progress * 400;
+        }
+        currentIdx = (currentIdx + 1) % cells.length;
+      }
+
+      highlightInterval = setInterval(highlightStep, speed);
+      highlightStep();
+    }
+
+    // ================================================================
+    // HANDLE WHEEL RESULT WITH BUFFS + RANDOM MODIFIER
+    // ================================================================
+    function handleWheelResult(resultName) {
+      // Check for Lucky Gate (10% chance)
+      if (resultName.includes('Lucky Gate')) {
+        // Auto-enter Lucky Gate
+        openLuckyGateModal();
+        addHistory({ type: 'luckygate', text: '🍀 Trúng Lucky Gate! Vào vòng quay may mắn.' });
+        saveData();
+        updateDashboard();
+        return;
+      }
+
+      // --- Special buff rewards ---
+      let starsEarned = 0;
+      let buffApplied = false;
+      let toastTitle = '';
+      let toastDesc = '';
+      let randomEventMsg = '';
+
+      // Helper to add stars with buffs and random modifier
+      const addStars = (amount) => {
+        let finalAmount = amount;
+        // Apply buffs first
+        if (data.doubleNextStar) {
+          finalAmount *= 2;
+          data.doubleNextStar = false;
+          showToast('×2 Active', 'Nhân đôi sao!');
+        }
+        if (data.tripleNextStar) {
+          finalAmount *= 3;
+          data.tripleNextStar = false;
+          showToast('×3 Active', 'Nhân ba sao!');
+        }
+        if (data.starRushCount > 0) {
+          finalAmount += 1;
+          data.starRushCount--;
+          showToast('⭐ Star Rush', `+1 sao thưởng (còn ${data.starRushCount} lượt)`);
+        }
+        // Apply random modifier
+        const modifier = applyRandomStarModifier(finalAmount);
+        finalAmount = modifier.amount;
+        randomEventMsg = modifier.message;
+        if (randomEventMsg) {
+          showToast('🎲 Sự kiện ngẫu nhiên', randomEventMsg);
+        }
+        // Finalize
+        data.stars += finalAmount;
+        data.lifetimeStars += finalAmount;
+        data.streak += 1;
+        addHistory({ type: 'reward', text: `⭐ +${finalAmount} sao từ "${resultName}"` });
+        starsEarned = finalAmount;
+        toastTitle = '⭐ Nhận sao';
+        toastDesc = `+${finalAmount} sao từ ${resultName}`;
+        if (randomEventMsg) toastDesc += ` (${randomEventMsg})`;
+      };
+
+      switch (resultName) {
+        case 'Random Stars':
+          const rand = Math.floor(Math.random() * 5) + 1;
+          addStars(rand);
+          break;
+        case 'Double Next Star':
+          data.doubleNextStar = true;
+          buffApplied = true;
+          toastTitle = '✨ Buff kích hoạt';
+          toastDesc = '×2 Sao tiếp theo';
+          addHistory({ type: 'buff', text: '×2 Sao tiếp theo được kích hoạt' });
+          break;
+        case 'Triple Next Star':
+          data.tripleNextStar = true;
+          buffApplied = true;
+          toastTitle = '✨ Buff kích hoạt';
+          toastDesc = '×3 Sao tiếp theo';
+          addHistory({ type: 'buff', text: '×3 Sao tiếp theo được kích hoạt' });
+          break;
+        case 'Star Chest':
+          const chestOptions = [2,3,5,8];
+          const chestStars = chestOptions[Math.floor(Math.random() * chestOptions.length)];
+          addStars(chestStars);
+          toastTitle = '📦 Rương sao';
+          toastDesc = `+${chestStars} sao!`;
+          break;
+        case 'Star Rush':
+          data.starRushCount = 3;
+          buffApplied = true;
+          toastTitle = '⚡ Star Rush';
+          toastDesc = '3 lượt tiếp theo mỗi lần +1 sao';
+          addHistory({ type: 'buff', text: 'Star Rush kích hoạt (3 lượt)' });
+          break;
+        case 'Lucky Day':
+          data.luckyDay = true;
+          buffApplied = true;
+          toastTitle = '🍀 Ngày may mắn';
+          toastDesc = 'Tăng cơ hội sao lớn ở lượt tiếp theo';
+          addHistory({ type: 'buff', text: 'Lucky Day kích hoạt' });
+          break;
+        case 'Bonus Draw':
+          data.drawTickets += 1;
+          toastTitle = '🎫 Vé quay thưởng';
+          toastDesc = '+1 Vé quay';
+          addHistory({ type: 'reward', text: '🎫 +1 Vé quay' });
+          break;
+        case 'Jackpot Stars':
+          const jackpot = Math.floor(Math.random() * 11) + 10;
+          addStars(jackpot);
+          toastTitle = '💎 Jackpot sao';
+          toastDesc = `+${jackpot} sao!`;
+          break;
+        default:
+          // Normal star rewards
+          let starMatch = resultName.match(/\+\s*(\d+)\s*Star/);
+          if (starMatch) {
+            const base = parseInt(starMatch[1]);
+            addStars(base);
+          } else {
+            // Non-star reward
+            data.streak += 1;
+            addHistory({ type: 'reward', text: `🎁 Phần thưởng: ${resultName}` });
+            toastTitle = '🎁 Phần thưởng';
+            toastDesc = resultName;
+          }
+      }
+
+      if (!buffApplied && starsEarned === 0 && !resultName.includes('Lucky Gate')) {
+        // handled above
+      } else if (starsEarned > 0) {
+        showToast(toastTitle, toastDesc);
+      } else if (buffApplied) {
+        showToast(toastTitle, toastDesc);
+      }
+
+      // Clear Lucky Day after one spin
+      if (data.luckyDay) {
+        data.luckyDay = false;
+      }
+
+      data.lifetimeRewards += 1;
+      saveData();
+      updateDashboard();
+      setTimeout(() => {
+        document.querySelectorAll('.cell.highlight').forEach(c => c.classList.remove('highlight'));
+      }, 1500);
+    }
+
+    // ================================================================
+    // LUCKY GATE MODAL (auto-open, new outcomes, 3 spins max)
+    // ================================================================
+    let luckyModalOpen = false;
+    let luckySpinsUsed = 0;
+    const LUCKY_OUTCOMES = ['+45', '+10', '+5', '+1', '0', '-2', '-6', '-12', '-20', '-30'];
+
+    function openLuckyGateModal() {
+      if (luckyModalOpen) return;
+      luckyModalOpen = true;
+      luckySpinsUsed = 0;
+
+      const overlay = document.createElement('div');
+      overlay.className = 'popup-overlay';
+      overlay.id = 'luckyPopup';
+      overlay.innerHTML = `
+        <div class="popup-box">
+          <h3>🍀 Lucky Gate</h3>
+          <p style="color:#6b6b67; margin-bottom:8px;">Mỗi lượt tốn 2 sao (có thể âm). Tối đa 3 lượt.</p>
+          <p id="luckySpinInfo" style="font-size:0.9rem; margin-bottom:12px;">Lượt còn lại: 3</p>
+          <div class="lucky-wheel-container">
+            <div class="lucky-grid" id="luckyGrid">
+              ${[0,1,2,3,4,5,6,7,8,9,10,11].map(i => `<div class="lucky-cell" data-idx="${i}">?</div>`).join('')}
+              <div class="lucky-center" id="luckySpinBtn">
+                <i class="ph ph-arrow-clockwise"></i> QUAY
+              </div>
+            </div>
+          </div>
+          <div style="text-align:center; margin-top:12px;">
+            <button class="btn" id="closeLuckyBtn">Đóng</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+
+      // Setup cells: first 10 cells get outcomes, last 2 are empty
+      const cells = overlay.querySelectorAll('.lucky-cell');
+      cells.forEach((c, i) => {
+        if (i < 10) {
+          c.textContent = LUCKY_OUTCOMES[i];
+        } else {
+          c.className = 'lucky-cell empty-cell';
+          c.textContent = '';
+        }
+      });
+
+      let spinning = false;
+      let luckyInterval = null;
+
+      function updateSpinInfo() {
+        const remaining = 3 - luckySpinsUsed;
+        document.getElementById('luckySpinInfo').textContent = `Lượt còn lại: ${remaining}`;
+        if (remaining <= 0) {
+          document.getElementById('luckySpinBtn').disabled = true;
+        }
+      }
+
+      document.getElementById('luckySpinBtn').onclick = function() {
+        if (spinning) return;
+        if (luckySpinsUsed >= 3) {
+          alert('Bạn đã dùng hết 3 lượt.');
+          return;
+        }
+        // Allow negative stars, so no check
+        spinning = true;
+        this.disabled = true;
+        data.stars -= 2; // may go negative
+        luckySpinsUsed++;
+        saveData();
+        updateDashboard();
+
+        const luckyCells = overlay.querySelectorAll('.lucky-cell:not(.empty-cell)');
+        let idx = 0;
+        let steps = 0;
+        const totalSteps = 5 * luckyCells.length + Math.floor(Math.random() * luckyCells.length);
+        let speed = 60;
+
+        function spinStep() {
+          luckyCells.forEach(c => c.classList.remove('highlight'));
+          const cell = luckyCells[idx % luckyCells.length];
+          cell.classList.add('highlight');
+          steps++;
+          if (steps >= totalSteps) {
+            clearInterval(luckyInterval);
+            const resultText = luckyCells[idx % luckyCells.length].textContent;
+            const value = parseInt(resultText);
+            data.stars += value;
+            if (value > 0) data.lifetimeStars += value;
+            addHistory({ type: 'luckygate', text: `🍀 Lucky Gate: ${resultText} sao` });
+            saveData();
+            updateDashboard();
+            showToast('🍀 Lucky Gate', `Kết quả: ${resultText} sao`);
+            spinning = false;
+            document.getElementById('luckySpinBtn').disabled = false;
+            updateSpinInfo();
+            // Check if still have spins left
+            if (luckySpinsUsed >= 3) {
+              document.getElementById('luckySpinBtn').disabled = true;
+              showToast('⏹️ Hết lượt', 'Bạn đã dùng hết 3 lượt quay.');
+              setTimeout(() => {
+                // close modal after a moment
+                if (overlay) overlay.remove();
+                luckyModalOpen = false;
+              }, 1500);
+            }
+            setTimeout(() => luckyCells.forEach(c => c.classList.remove('highlight')), 1000);
+            return;
+          }
+          if (steps > 5 * luckyCells.length) {
+            const progress = (steps - 5 * luckyCells.length) / (totalSteps - 5 * luckyCells.length);
+            speed = 60 + progress * 400;
+          }
+          idx = (idx + 1) % luckyCells.length;
+        }
+
+        luckyInterval = setInterval(spinStep, speed);
+        spinStep();
+        updateSpinInfo();
+      };
+
+      document.getElementById('closeLuckyBtn').onclick = () => {
+        if (luckyInterval) clearInterval(luckyInterval);
+        overlay.remove();
+        luckyModalOpen = false;
+        // Reset spin count if closed early
+        luckySpinsUsed = 0;
+      };
+
+      updateSpinInfo();
+    }
+
+    // ================================================================
+    // SHOP BUY
+    // ================================================================
+    function buyShopItem(id) {
+      const item = data.shopItems.find(i => i.id === id);
+      if (!item) return;
+      if (data.stars < item.cost) { alert('Không đủ sao!'); return; }
+      data.stars -= item.cost;
+      item.lastRedeemed = new Date().toLocaleString('vi-VN');
+      addHistory({ type: 'shop', text: `🛒 Mua "${item.name}" (${item.cost}⭐)` });
+      addPurchaseHistory(item.name, item.cost);
+      saveData();
+      updateDashboard();
+      renderShop();
+      showToast('✓ Mua thành công', `${item.name} — -${item.cost} sao`);
+    }
+
+    // ================================================================
+    // TIMER - COUNT UP & POMODORO (no anti-cheat, real elapsed)
+    // ================================================================
+    let timerInterval = null;
+    let pomodoroInterval = null;
+
+    function startTimer() {
+      const mode = document.querySelector('input[name="timerMode"]:checked').value;
+      if (mode === 'countup') {
+        startCountUp();
+      } else {
+        startPomodoro();
+      }
+    }
+
+    function startCountUp() {
+      if (data.timerRunning) return;
+      data.timerRunning = true;
+      data.timerPaused = false;
+      data.sessionStart = Date.now();
+      data.elapsedSeconds = data.timerSeconds;
+      saveData();
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (!data.timerRunning) return;
+        const now = Date.now();
+        const delta = Math.floor((now - data.sessionStart) / 1000);
+        data.timerSeconds = data.elapsedSeconds + delta;
+        if (data.timerSeconds >= 3600) {
+          const addHours = Math.floor(data.timerSeconds / 3600);
+          data.hours += addHours;
+          data.lifetimeHours += addHours;
+          data.drawTickets += addHours;
+          data.timerSeconds = data.timerSeconds % 3600;
+          data.elapsedSeconds = 0;
+          data.sessionStart = Date.now();
+          addHistory({ type: 'progress', text: `⏱️ +${addHours}h học · +${addHours} Vé quay` });
+
+          // Cập nhật streak ngày nếu tổng số giờ trong ngày đạt ít nhất 1h
+          updateStreakDays();
+        }
+        saveData();
+        updateDashboard();
+      }, 1000);
+      updateDashboard();
+    }
+
+    function startPomodoro() {
+      if (data.pomodoroActive) return;
+      data.pomodoroActive = true;
+      data.pomodoroPhase = 'study';
+      data.pomodoroRemaining = data.pomodoroStudy * 60;
+      saveData();
+      updateDashboard();
+      if (pomodoroInterval) clearInterval(pomodoroInterval);
+      pomodoroInterval = setInterval(() => {
+        if (!data.pomodoroActive) return;
+        data.pomodoroRemaining--;
+        if (data.pomodoroRemaining <= 0) {
+          if (data.pomodoroPhase === 'study') {
+            data.pomodoroPhase = 'break';
+            data.pomodoroRemaining = data.pomodoroBreak * 60;
+            showToast('🍅 Nghỉ giải lao', 'Hoàn thành phiên học!');
+            addHistory({ type: 'pomodoro', text: '✅ Hoàn thành phiên học' });
+            // Kiểm tra streak sau mỗi phiên học (có thể cộng dồn giờ)
+            // Đơn giản: sau mỗi phiên học, nếu tổng giờ trong ngày >=1 thì update streak
+            // Nhưng để đơn giản, ta sẽ kiểm tra khi timer đạt 1h (phần countup đã có)
+          } else {
+            data.pomodoroPhase = 'study';
+            data.pomodoroRemaining = data.pomodoroStudy * 60;
+            showToast('📚 Học tiếp', 'Kết thúc giải lao, quay lại học!');
+            addHistory({ type: 'pomodoro', text: '✅ Hoàn thành giải lao' });
+          }
+          saveData();
+        }
+        updateDashboard();
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      const mode = document.querySelector('input[name="timerMode"]:checked').value;
+      if (mode === 'countup') {
+        if (data.timerRunning) {
+          data.timerRunning = false;
+          data.timerPaused = true;
+          if (data.sessionStart) {
+            const now = Date.now();
+            const delta = Math.floor((now - data.sessionStart) / 1000);
+            data.timerSeconds = data.elapsedSeconds + delta;
+            data.elapsedSeconds = data.timerSeconds;
+            data.sessionStart = null;
+          }
+          if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+          saveData();
+          updateDashboard();
+        }
+      } else {
+        if (data.pomodoroActive) {
+          data.pomodoroActive = false;
+          if (pomodoroInterval) { clearInterval(pomodoroInterval); pomodoroInterval = null; }
+          saveData();
+          updateDashboard();
+        }
+      }
+    }
+
+    function resetTimer() {
+      const mode = document.querySelector('input[name="timerMode"]:checked').value;
+      if (mode === 'countup') {
+        pauseTimer();
+        data.timerSeconds = 0;
+        data.elapsedSeconds = 0;
+        data.sessionStart = null;
+        data.timerRunning = false;
+        data.timerPaused = false;
+        saveData();
+        updateDashboard();
+      } else {
+        pauseTimer();
+        data.pomodoroActive = false;
+        data.pomodoroPhase = 'study';
+        data.pomodoroRemaining = data.pomodoroStudy * 60;
+        saveData();
+        updateDashboard();
+      }
+    }
+
+    // ================================================================
+    // TIMER MODE SWITCH
+    // ================================================================
+    document.querySelectorAll('input[name="timerMode"]').forEach(radio => {
+      radio.addEventListener('change', function() {
+        const mode = this.value;
+        if (mode === 'pomodoro') {
+          document.getElementById('pomodoroSettings').style.display = 'flex';
+          pauseTimer();
+          resetTimer();
+          data.pomodoroRemaining = data.pomodoroStudy * 60;
+          data.pomodoroPhase = 'study';
+          updateDashboard();
+        } else {
+          document.getElementById('pomodoroSettings').style.display = 'none';
+          pauseTimer();
+          resetTimer();
+          updateDashboard();
+        }
+      });
+    });
+
+    // ================================================================
+    // SETTINGS
+    // ================================================================
+    function exportData() {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'reward_hub_backup.json';
+      a.click();
+    }
+
+    function importData(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (typeof imported === 'object' && imported !== null) {
+            data = imported;
+            saveData();
+            refreshAll();
+            alert('Import thành công!');
+          }
+        } catch (err) { alert('File không hợp lệ'); }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetData() {
+      if (!confirm('Xóa toàn bộ dữ liệu?')) return;
+      data = getDefaultData();
+      saveData();
+      refreshAll();
+    }
+
+    // ================================================================
+    // REFRESH ALL
+    // ================================================================
+    function refreshAll() {
+      updateDashboard();
+      renderShop();
+      renderHistory();
+      renderRewardPool();
+      buildWheelGrid();
+      wheelPhase = 'idle';
+      removedCount = 0;
+      wheelItems = [];
+      data.wheelRevealed = false;
+      data.wheelResult = null;
+      document.getElementById('wheelStatus').textContent = 'Sẵn sàng';
+      document.getElementById('confirmRevealBtn').disabled = true;
+      const spinBtn = document.getElementById('spinCenterBtn');
+      if (spinBtn) spinBtn.disabled = true;
+      if (highlightInterval) { clearInterval(highlightInterval); highlightInterval = null; }
+      if (document.querySelector('input[name="timerMode"]:checked').value === 'pomodoro') {
+        data.pomodoroRemaining = data.pomodoroStudy * 60;
+        data.pomodoroPhase = 'study';
+      }
+      // Nếu chưa có lastStudyDate, set về null
+      if (!data.lastStudyDate) {
+        data.lastStudyDate = null;
+      }
+      saveData();
+    }
+
+    // ================================================================
+    // NAVIGATION
+    // ================================================================
+    document.querySelectorAll('.sidebar-item').forEach(el => {
+      el.addEventListener('click', function() {
+        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+        const page = this.dataset.page;
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-' + page).classList.add('active');
+      });
+    });
+
+    // ================================================================
+    // DOM READY
+    // ================================================================
+    document.addEventListener('DOMContentLoaded', function() {
+      updateMotivation();
+      refreshAll();
+
+      // Timer controls
+      document.getElementById('timerToggleBtn').onclick = () => {
+        const mode = document.querySelector('input[name="timerMode"]:checked').value;
+        if (mode === 'countup') {
+          if (data.timerRunning) pauseTimer();
+          else startTimer();
+        } else {
+          if (data.pomodoroActive) pauseTimer();
+          else startTimer();
+        }
+      };
+      document.getElementById('timerResetBtn').onclick = resetTimer;
+
+      // Pomodoro apply
+      document.getElementById('applyPomodoroBtn').onclick = function() {
+        const study = parseInt(document.getElementById('pomodoroStudy').value) || 25;
+        const bre = parseInt(document.getElementById('pomodoroBreak').value) || 5;
+        data.pomodoroStudy = study;
+        data.pomodoroBreak = bre;
+        if (document.querySelector('input[name="timerMode"]:checked').value === 'pomodoro') {
+          data.pomodoroRemaining = study * 60;
+          data.pomodoroPhase = 'study';
+        }
+        saveData();
+        updateDashboard();
+        document.getElementById('pomodoroConfig').textContent = `${study} / ${bre} phút`;
+        showToast('⚙️ Đã cập nhật', `Pomodoro: ${study}/${bre} phút`);
+      };
+
+      // Vault toggle
+      document.getElementById('vaultToggle').onclick = function() {
+        const content = document.getElementById('vaultContent');
+        const isOpen = content.classList.toggle('open');
+        this.classList.toggle('open');
+      };
+
+      // Info button
+      document.getElementById('vaultInfoBtn').onclick = function() {
+        document.getElementById('infoModal').style.display = 'flex';
+      };
+      document.getElementById('closeInfoBtn').onclick = function() {
+        document.getElementById('infoModal').style.display = 'none';
+      };
+      document.getElementById('infoModal').addEventListener('click', function(e) {
+        if (e.target === this) this.style.display = 'none';
+      });
+
+      // Add reward
+      document.getElementById('addRewardBtn').onclick = function() {
+        const name = document.getElementById('newRewardName').value.trim();
+        if (!name) return;
+        data.rewards.push({ id: genId(), name });
+        saveData();
+        renderRewardPool();
+        updateDashboard();
+        document.getElementById('newRewardName').value = '';
+      };
+
+      // Wheel buttons
+      document.getElementById('prepareWheelBtn').onclick = prepareWheel;
+      document.getElementById('confirmRevealBtn').onclick = confirmReveal;
+      document.getElementById('resetWheelBtn').onclick = function() {
+        if (highlightInterval) { clearInterval(highlightInterval); highlightInterval = null; }
+        refreshAll();
+        buildWheelGrid();
+        wheelPhase = 'idle';
+        removedCount = 0;
+        document.getElementById('wheelStatus').textContent = 'Sẵn sàng';
+        document.getElementById('confirmRevealBtn').disabled = true;
+        const spinBtn = document.getElementById('spinCenterBtn');
+        if (spinBtn) spinBtn.disabled = true;
+      };
+
+      // Shop
+      document.getElementById('addShopItemBtn').onclick = function() {
+        const name = document.getElementById('shopItemName').value.trim();
+        const cost = parseInt(document.getElementById('shopItemCost').value);
+        if (!name || isNaN(cost) || cost < 0) { alert('Nhập tên và giá hợp lệ'); return; }
+        data.shopItems.push({ id: genId(), name, cost, lastRedeemed: null });
+        saveData();
+        renderShop();
+        document.getElementById('shopItemName').value = '';
+        document.getElementById('shopItemCost').value = '';
+      };
+
+      // Settings
+      document.getElementById('exportBtn').onclick = exportData;
+      document.getElementById('importBtn').onclick = () => document.getElementById('importFileInput').click();
+      document.getElementById('importFileInput').onchange = function(e) {
+        if (this.files.length) importData(this.files[0]);
+        this.value = '';
+      };
+      document.getElementById('resetBtn').onclick = resetData;
+
+      buildWheelGrid();
+    });
+  </script>
+</body>
+</html>
