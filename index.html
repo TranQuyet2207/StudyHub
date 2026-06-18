@@ -2162,6 +2162,13 @@
       if (data.pomodoroActive) syncPomodoroTimer();
       saveData();
     });
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/StudyHub/sw.js')
+          .then(() => console.log('Service Worker registered'))
+          .catch(err => console.log('SW registration failed', err));
+      });
+    }
   </script>
 </body>
 </html>
