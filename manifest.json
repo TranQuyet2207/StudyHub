@@ -1,0 +1,24 @@
+{
+  "name": "Reward Hub - Học tập có thưởng",
+  "short_name": "Reward Hub",
+  "description": "Ứng dụng quản lý học tập và vòng quay phần thưởng",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#f7f6f2",
+  "theme_color": "#f7f6f2",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icons/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
