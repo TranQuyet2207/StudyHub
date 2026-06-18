@@ -12,7 +12,9 @@
     /* ===== RESET & GLOBAL ===== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: #fafaf7;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.95), rgba(255,255,255,0) 32%),
+        linear-gradient(180deg, #f7f6f2 0%, #f1efe8 100%);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       color: #1e1e1e;
       display: flex;
@@ -24,10 +26,14 @@
       width: 200px;
       flex-shrink: 0;
       padding: 24px 12px;
-      border-right: 1px solid #e8e8e5;
+      border-right: 1px solid rgba(216, 212, 201, 0.85);
       height: fit-content;
       position: sticky;
       top: 20px;
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(12px);
+      border-radius: 22px;
+      box-shadow: 0 14px 40px rgba(74, 63, 44, 0.06);
     }
     .sidebar-item {
       display: flex;
@@ -42,13 +48,14 @@
       transition: background 0.15s;
     }
     .sidebar-item i { width: 20px; font-size: 1.15rem; color: #3a3a3a; }
-    .sidebar-item.active { background: #eaeae6; }
+    .sidebar-item.active { background: linear-gradient(135deg, #1e1e1e, #3a3a3a); color: #fff; }
+    .sidebar-item.active i { color: #fff; }
     .sidebar-item:hover { background: #f0f0eb; }
 
     .main {
       flex: 1;
       padding: 10px 30px 40px;
-      max-width: 1100px;
+      max-width: 1160px;
     }
     .page { display: none; animation: fade 0.2s ease; }
     .page.active { display: block; }
@@ -56,12 +63,23 @@
 
     h1 { font-weight: 500; letter-spacing: -0.01em; font-size: 1.9rem; margin-bottom: 16px; }
     .card {
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 20px 24px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02);
-      border: 1px solid #efefec;
+      background: rgba(255,255,255,0.92);
+      border-radius: 22px;
+      padding: 22px 24px;
+      box-shadow: 0 18px 45px rgba(74, 63, 44, 0.07);
+      border: 1px solid rgba(239,239,236,0.95);
       margin-bottom: 24px;
+    }
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #8b6f3d;
+      margin-bottom: 6px;
     }
     .flex-row {
       display: flex;
@@ -70,10 +88,11 @@
       align-items: center;
     }
     .stat-box {
-      background: #f6f6f2;
-      border-radius: 12px;
+      background: linear-gradient(180deg, #fbfaf6 0%, #f3f1ea 100%);
+      border-radius: 18px;
       padding: 12px 20px;
       min-width: 100px;
+      border: 1px solid rgba(224, 221, 211, 0.9);
     }
     .stat-label {
       font-size: 0.75rem;
@@ -88,8 +107,8 @@
     }
     .progress-container {
       width: 100%;
-      background: #eaeae6;
-      height: 10px;
+      background: #ebe7de;
+      height: 12px;
       border-radius: 20px;
       margin: 12px 0 6px;
       overflow: hidden;
@@ -98,8 +117,46 @@
       height: 100%;
       border-radius: 20px;
       width: 0%;
-      transition: width 0.3s;
-      background: #e53e3e;
+      transition: width 0.35s ease, background 0.35s ease;
+      background: linear-gradient(90deg, #ff7a59 0%, #ffb04c 100%);
+    }
+    .daily-progress-card {
+      margin: 18px 0 10px;
+      padding: 18px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(255, 243, 214, 0.95), rgba(255, 250, 239, 0.95));
+      border: 1px solid rgba(231, 201, 142, 0.55);
+    }
+    .daily-progress-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .daily-progress-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: #2b2417;
+    }
+    .daily-progress-meta {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #6b4e1e;
+    }
+    .daily-progress-caption {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: #6d6047;
+    }
+    .progress-container.progress-container-daily {
+      height: 14px;
+      background: rgba(141, 103, 32, 0.12);
+      margin-top: 14px;
+    }
+    .progress-fill.progress-fill-daily {
+      background: linear-gradient(90deg, #f59e0b 0%, #ef4444 55%, #7c3aed 100%);
+      box-shadow: 0 6px 16px rgba(239, 68, 68, 0.22);
     }
     .milestone-row {
       display: flex;
@@ -434,24 +491,61 @@
     }
     .timer-display {
       font-feature-settings: "tnum";
-      font-size: 1.6rem;
-      font-weight: 500;
+      font-size: 1.9rem;
+      font-weight: 600;
       letter-spacing: 0.02em;
+      padding: 12px 16px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #fcfbf7 0%, #f1eee5 100%);
+      border: 1px solid rgba(223, 219, 209, 0.9);
+      min-width: 158px;
+      text-align: center;
+    }
+    .timer-meta {
+      font-size: 0.9rem;
+      color: #6b6b67;
+      margin-top: 2px;
     }
 
     .motivation-card {
-      background: #ffffff;
-      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(248,245,236,0.96));
+      border-radius: 24px;
       padding: 24px 28px;
-      border: 1px solid #efefec;
+      border: 1px solid rgba(239,239,236,0.98);
       margin-bottom: 24px;
       text-align: center;
+      box-shadow: 0 18px 42px rgba(76, 62, 38, 0.06);
+    }
+    .motivation-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .motivation-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, 0.12);
+      color: #9a6700;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .quote-refresh-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #f7f4ec;
+      border: 1px solid rgba(223, 219, 209, 0.9);
     }
     .motivation-quote {
-      font-size: 1.25rem;
-      font-weight: 400;
+      font-size: 1.35rem;
+      font-weight: 500;
       color: #1e1e1e;
-      line-height: 1.6;
+      line-height: 1.65;
     }
     .motivation-author {
       margin-top: 8px;
@@ -491,7 +585,7 @@
 
     @media (max-width: 700px) {
       body { flex-direction: column; padding: 12px; }
-      .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e8e8e5; display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 0; position: static; }
+      .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e8e8e5; display: flex; flex-wrap: wrap; gap: 4px; padding: 10px; position: static; border-radius: 20px; }
       .sidebar-item { padding: 6px 12px; }
       .main { padding: 16px 6px; }
       .wheel-grid { gap: 6px; }
@@ -501,7 +595,10 @@
       .lucky-grid { gap: 4px; }
       .lucky-cell { font-size: 0.7rem; }
       .popup-box { padding: 20px 16px; }
-      .motivation-quote { font-size: 1rem; }
+      .motivation-card, .card { border-radius: 18px; }
+      .motivation-head, .daily-progress-header { align-items: stretch; }
+      .motivation-quote { font-size: 1.02rem; }
+      .timer-display { width: 100%; }
     }
   </style>
 </head>
@@ -521,14 +618,23 @@
 
       <!-- Motivation Panel -->
       <div class="motivation-card" id="motivationCard">
-        <div class="motivation-quote" id="quoteText">"Hãy đói, hãy khờ."</div>
+        <div class="motivation-head">
+          <span class="motivation-chip" id="quoteCategory">Tiếp sức</span>
+          <button class="icon-btn quote-refresh-btn" id="refreshQuoteBtn" title="Đổi câu động lực">
+            <i class="ph ph-arrow-clockwise"></i>
+          </button>
+        </div>
+        <div class="motivation-quote" id="quoteText">"Hãy luôn khao khát, hãy cứ dại khờ."</div>
         <div class="motivation-author" id="quoteAuthor">Steve Jobs</div>
       </div>
 
       <!-- Progress & Stats -->
       <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-          <span><strong>Tiến độ tuần</strong></span>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <span>
+            <span class="section-kicker">Tổng tiến độ</span><br />
+            <strong>Mục tiêu 100 giờ</strong>
+          </span>
           <span id="hoursDisplay">0 / 100 giờ</span>
         </div>
         <div class="progress-container">
@@ -537,6 +643,19 @@
         <div class="milestone-row">
           <span>0h</span><span>20h</span><span>40h</span><span>60h</span><span>100h</span>
         </div>
+        <div class="daily-progress-card">
+          <div class="daily-progress-header">
+            <div>
+              <span class="section-kicker">Tiến trình hôm nay</span>
+              <div class="daily-progress-title">Thanh học trong ngày</div>
+            </div>
+            <div class="daily-progress-meta" id="dailyProgressText">0 phút / 10 giờ</div>
+          </div>
+          <div class="progress-container progress-container-daily">
+            <div class="progress-fill progress-fill-daily" id="dailyProgressFill" style="width:0%;"></div>
+          </div>
+          <div class="daily-progress-caption" id="dailyProgressHint">Thanh này tự đặt lại mỗi ngày và vẫn tăng rõ ràng ngay từ 10-15 phút đầu tiên.</div>
+        </div>
 
         <!-- Timer -->
         <div class="timer-bar">
@@ -544,6 +663,7 @@
           <button class="btn" id="timerToggleBtn"><i class="ph ph-play"></i> Bắt đầu</button>
           <button class="btn" id="timerResetBtn"><i class="ph ph-arrow-counter-clockwise"></i> Đặt lại</button>
         </div>
+        <div class="timer-meta" id="sessionStatusText">Thời gian học được ghi nhận theo thời gian thực.</div>
 
         <!-- Timer mode selection -->
         <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:8px;">
@@ -567,6 +687,7 @@
         <div class="flex-row" style="margin-top:12px;">
           <div class="stat-box"><div class="stat-label">Sao hiện có</div><div class="stat-value" id="starDisplay">0</div></div>
           <div class="stat-box"><div class="stat-label">Vé quay</div><div class="stat-value" id="ticketDisplay">0</div></div>
+          <div class="stat-box"><div class="stat-label">Hôm nay</div><div class="stat-value" id="todayStudyDisplay">0p</div></div>
           <div class="stat-box"><div class="stat-label">Streak ngày</div><div class="stat-value" id="streakDaysDisplay">0</div></div>
           <div class="stat-box"><div class="stat-label">Tổng giờ</div><div class="stat-value" id="lifetimeHoursDisplay">0</div></div>
         </div>
@@ -675,6 +796,96 @@
     // DATA LAYER
     // ================================================================
     const STORAGE_KEY = 'rewardRouletteData';
+    const MAX_DAILY_STUDY_SECONDS = 10 * 60 * 60;
+
+    function getLocalDateKey(date = new Date()) {
+      const d = date instanceof Date ? date : new Date(date);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function formatClock(totalSeconds, showHours = true) {
+      const safeSeconds = Math.max(0, Math.floor(totalSeconds || 0));
+      const h = String(Math.floor(safeSeconds / 3600)).padStart(2, '0');
+      const m = String(Math.floor((safeSeconds % 3600) / 60)).padStart(2, '0');
+      const s = String(safeSeconds % 60).padStart(2, '0');
+      return showHours ? `${h}:${m}:${s}` : `${m}:${s}`;
+    }
+
+    function formatDurationLabel(totalSeconds) {
+      const safeSeconds = Math.max(0, Math.floor(totalSeconds || 0));
+      const hours = Math.floor(safeSeconds / 3600);
+      const minutes = Math.floor((safeSeconds % 3600) / 60);
+      if (hours > 0 && minutes > 0) return `${hours} giờ ${minutes} phút`;
+      if (hours > 0) return `${hours} giờ`;
+      if (minutes > 0) return `${minutes} phút`;
+      return `${safeSeconds % 60} giây`;
+    }
+
+    function formatCompactDuration(totalSeconds) {
+      const safeSeconds = Math.max(0, Math.floor(totalSeconds || 0));
+      const hours = Math.floor(safeSeconds / 3600);
+      const minutes = Math.floor((safeSeconds % 3600) / 60);
+      if (hours > 0) return `${hours}h ${String(minutes).padStart(2, '0')}p`;
+      return `${minutes}p`;
+    }
+
+    function ensureTodayStudyData() {
+      const todayKey = getLocalDateKey();
+      if (data.todayStudyDate !== todayKey) {
+        data.todayStudyDate = todayKey;
+        data.todayStudySeconds = 0;
+      }
+    }
+
+    function awardStudyMilestones() {
+      const totalHours = Math.floor((data.totalStudySeconds || 0) / 3600);
+      const currentLifetimeHours = Number(data.lifetimeHours) || 0;
+      if (totalHours > currentLifetimeHours) {
+        const gained = totalHours - currentLifetimeHours;
+        data.hours += gained;
+        data.drawTickets += gained;
+        data.lifetimeHours = totalHours;
+        addHistory({ type: 'progress', text: `⏱️ +${gained}h học · +${gained} Vé quay` });
+      } else {
+        data.lifetimeHours = totalHours;
+      }
+    }
+
+    function addStudyTimeRange(startMs, endMs) {
+      if (!startMs || !endMs || endMs <= startMs) return 0;
+      let cursor = startMs;
+      let addedSeconds = 0;
+      const todayKey = getLocalDateKey();
+
+      while (cursor < endMs) {
+        const cursorDate = new Date(cursor);
+        const nextDay = new Date(cursorDate);
+        nextDay.setHours(24, 0, 0, 0);
+        const chunkEnd = Math.min(endMs, nextDay.getTime());
+        const chunkSeconds = Math.floor((chunkEnd - cursor) / 1000);
+        if (chunkSeconds <= 0) break;
+
+        data.totalStudySeconds = (data.totalStudySeconds || 0) + chunkSeconds;
+        if (getLocalDateKey(cursorDate) === todayKey) {
+          if (data.todayStudyDate !== todayKey) {
+            data.todayStudyDate = todayKey;
+            data.todayStudySeconds = 0;
+          }
+          data.todayStudySeconds = (data.todayStudySeconds || 0) + chunkSeconds;
+        }
+
+        addedSeconds += chunkSeconds;
+        cursor += chunkSeconds * 1000;
+      }
+
+      awardStudyMilestones();
+      updateStreakDays();
+      return addedSeconds;
+    }
+
     function getDefaultData() {
       const defaultRewards = [
         'Coffee', 'Snack', 'Game 10m', 'Game 20m', 'YouTube',
@@ -698,6 +909,9 @@
         lifetimeStars: 0,
         lifetimeRewards: 0,
         lifetimeHours: 0,
+        totalStudySeconds: 0,
+        todayStudySeconds: 0,
+        todayStudyDate: getLocalDateKey(),
         drawTickets: 0,   // mặc định 0 vé quay
         rewards: defaultRewards.map(name => ({ id: 'r' + Date.now() + Math.random().toString(36).substr(2,4), name })),
         shopItems: [
@@ -717,12 +931,14 @@
         timerPaused: false,
         sessionStart: null,
         elapsedSeconds: 0,
+        timerMode: 'countup',
         // Pomodoro
         pomodoroStudy: 25,
         pomodoroBreak: 5,
         pomodoroPhase: 'study',
         pomodoroRemaining: 25 * 60,
         pomodoroActive: false,
+        pomodoroLastTick: null,
         // Buffs
         doubleNextStar: false,
         tripleNextStar: false,
@@ -746,6 +962,13 @@
           const def = getDefaultData();
           for (let key in def) {
             if (!(key in parsed)) parsed[key] = def[key];
+          }
+          const migratedHours = Math.max(Number(parsed.lifetimeHours) || 0, Number(parsed.hours) || 0);
+          parsed.totalStudySeconds = Math.max(Number(parsed.totalStudySeconds) || 0, migratedHours * 3600 + (Number(parsed.timerSeconds) || 0));
+          if (!parsed.todayStudyDate) parsed.todayStudyDate = getLocalDateKey();
+          if (parsed.todayStudyDate !== getLocalDateKey() && !parsed.timerRunning && !parsed.pomodoroActive) {
+            parsed.todayStudyDate = getLocalDateKey();
+            parsed.todayStudySeconds = 0;
           }
           return parsed;
         }
@@ -788,19 +1011,29 @@
     // MOTIVATION QUOTES (Vietnamese)
     // ================================================================
     const quotes = [
-      { text: "Hãy đói, hãy khờ.", author: "Steve Jobs" },
-      { text: "Cách tốt nhất để dự đoán tương lai là tạo ra nó.", author: "Alan Kay" },
-      { text: "Sự kiên trì rất quan trọng. Bạn không nên bỏ cuộc trừ khi bị ép buộc.", author: "Elon Musk" },
-      { text: "Thành công là một người thầy tồi. Nó khiến người thông minh nghĩ rằng họ không thể thua.", author: "Bill Gates" },
-      { text: "Di chuyển nhanh và xây dựng mọi thứ.", author: "Mark Zuckerberg" },
-      { text: "Những khách hàng không hài lòng nhất của bạn là nguồn học hỏi lớn nhất.", author: "Bill Gates" },
-      { text: "Những người đủ điên rồ để nghĩ rằng họ có thể thay đổi thế giới mới là người làm được điều đó.", author: "Steve Jobs" }
+      { text: "Hãy luôn khao khát, hãy cứ dại khờ.", author: "Steve Jobs", tag: "Bứt phá" },
+      { text: "Cách tốt nhất để đoán trước tương lai là tự tay tạo ra nó.", author: "Alan Kay", tag: "Tầm nhìn" },
+      { text: "Sự bền bỉ rất quan trọng. Đừng bỏ cuộc, trừ khi bạn thật sự không còn lựa chọn nào khác.", author: "Elon Musk", tag: "Kiên trì" },
+      { text: "Thành công là người thầy khắt khe: nó dễ khiến ta lầm tưởng rằng mình không thể thất bại.", author: "Bill Gates", tag: "Tỉnh táo" },
+      { text: "Hãy tiến thật nhanh, nhưng vẫn phải tạo ra thứ đáng để giữ lại.", author: "Mark Zuckerberg", tag: "Hành động" },
+      { text: "Khách hàng khó tính nhất thường là người dạy bạn nhiều điều nhất.", author: "Bill Gates", tag: "Học hỏi" },
+      { text: "Chính những người đủ khác biệt để nghĩ rằng họ có thể đổi thế giới mới là người làm được điều đó.", author: "Steve Jobs", tag: "Niềm tin" },
+      { text: "Bạn không cần phải giỏi ngay từ đầu, nhưng phải bắt đầu thì mới có thể giỏi.", author: "Zig Ziglar", tag: "Bắt đầu" },
+      { text: "Những việc nhỏ làm đều đặn mỗi ngày sẽ tạo nên khác biệt rất lớn sau một thời gian.", author: "Robin Sharma", tag: "Đều đặn" }
     ];
 
+    let lastQuoteIndex = -1;
     function updateMotivation() {
-      const idx = Math.floor(Math.random() * quotes.length);
+      let idx = Math.floor(Math.random() * quotes.length);
+      if (quotes.length > 1) {
+        while (idx === lastQuoteIndex) {
+          idx = Math.floor(Math.random() * quotes.length);
+        }
+      }
+      lastQuoteIndex = idx;
       document.getElementById('quoteText').textContent = `"${quotes[idx].text}"`;
       document.getElementById('quoteAuthor').textContent = quotes[idx].author;
+      document.getElementById('quoteCategory').textContent = quotes[idx].tag;
     }
 
     // ================================================================
@@ -831,47 +1064,63 @@
     // RENDER HELPERS
     // ================================================================
     function updateDashboard() {
+      ensureTodayStudyData();
       const pct = Math.min(100, (data.hours / 100) * 100);
       document.getElementById('hoursDisplay').textContent = `${data.hours} / 100 giờ`;
       const fill = document.getElementById('progressFill');
       fill.style.width = pct + '%';
-      let color = '#e53e3e';
-      if (pct >= 60) color = '#22C55E';
-      else if (pct >= 40) color = '#ed8936';
-      else if (pct >= 20) color = '#ecc94b';
+      let color = 'linear-gradient(90deg, #ff7a59 0%, #ffb04c 100%)';
+      if (pct >= 60) color = 'linear-gradient(90deg, #22c55e 0%, #16a34a 100%)';
+      else if (pct >= 40) color = 'linear-gradient(90deg, #f59e0b 0%, #f97316 100%)';
+      else if (pct >= 20) color = 'linear-gradient(90deg, #facc15 0%, #f59e0b 100%)';
       fill.style.background = color;
       document.getElementById('starDisplay').textContent = data.stars;
       document.getElementById('ticketDisplay').textContent = data.drawTickets;
+      document.getElementById('todayStudyDisplay').textContent = formatCompactDuration(data.todayStudySeconds || 0);
       document.getElementById('streakDaysDisplay').textContent = data.streakDays;
       document.getElementById('lifetimeHoursDisplay').textContent = data.lifetimeHours;
       document.getElementById('vaultCount').textContent = `(${data.rewards.length})`;
 
-      // Timer display - use real elapsed time
+      const todaySeconds = data.todayStudySeconds || 0;
+      const todayCappedSeconds = Math.min(MAX_DAILY_STUDY_SECONDS, todaySeconds);
+      const dailyPct = Math.min(100, (todayCappedSeconds / MAX_DAILY_STUDY_SECONDS) * 100);
+      document.getElementById('dailyProgressFill').style.width = `${dailyPct}%`;
+      document.getElementById('dailyProgressText').textContent = `${formatDurationLabel(todaySeconds)} / 10 giờ`;
+      const dailyHint = dailyPct >= 100
+        ? 'Bạn đã chạm mốc 10 giờ hôm nay. Thanh sẽ tự đặt lại khi sang ngày mới.'
+        : `Hôm nay đã học ${formatDurationLabel(todaySeconds)}. Còn ${formatDurationLabel(MAX_DAILY_STUDY_SECONDS - todayCappedSeconds)} để đầy thanh.`;
+      document.getElementById('dailyProgressHint').textContent = dailyHint;
+
       let displaySeconds = data.timerSeconds;
       if (data.timerRunning && data.sessionStart) {
         const now = Date.now();
         const elapsed = Math.floor((now - data.sessionStart) / 1000);
-        displaySeconds = data.elapsedSeconds + elapsed;
+        displaySeconds = data.timerSeconds + elapsed;
       }
-      const h = String(Math.floor(displaySeconds / 3600)).padStart(2,'0');
-      const m = String(Math.floor((displaySeconds % 3600) / 60)).padStart(2,'0');
-      const s = String(displaySeconds % 60).padStart(2,'0');
-      document.getElementById('timerDisplay').textContent = `${h}:${m}:${s}`;
+      document.getElementById('timerDisplay').textContent = formatClock(displaySeconds);
       const btn = document.getElementById('timerToggleBtn');
-      if (data.timerRunning) btn.innerHTML = '<i class="ph ph-pause"></i> Tạm dừng';
+      if (data.timerRunning || data.pomodoroActive) btn.innerHTML = '<i class="ph ph-pause"></i> Tạm dừng';
       else btn.innerHTML = '<i class="ph ph-play"></i> Bắt đầu';
 
-      // Pomodoro display
       const mode = document.querySelector('input[name="timerMode"]:checked').value;
       if (mode === 'pomodoro') {
         const remaining = data.pomodoroRemaining;
-        const mins = String(Math.floor(remaining / 60)).padStart(2,'0');
-        const secs = String(remaining % 60).padStart(2,'0');
-        document.getElementById('timerDisplay').textContent = `${mins}:${secs}`;
+        document.getElementById('timerDisplay').textContent = formatClock(remaining, false);
         document.getElementById('phaseLabel').textContent = data.pomodoroPhase === 'study' ? 'Học' : 'Nghỉ';
+        document.getElementById('sessionStatusText').textContent =
+          data.pomodoroActive
+            ? `Pomodoro đang chạy ở pha ${data.pomodoroPhase === 'study' ? 'học' : 'nghỉ'}.`
+            : `Pomodoro sẵn sàng ở pha ${data.pomodoroPhase === 'study' ? 'học' : 'nghỉ'}.`;
+      } else {
+        document.getElementById('sessionStatusText').textContent =
+          data.timerRunning
+            ? `Đang ghi nhận phiên học hiện tại: ${formatDurationLabel(displaySeconds)}.`
+            : (displaySeconds > 0
+              ? `Phiên hiện tại đã tích lũy ${formatDurationLabel(displaySeconds)}.`
+              : 'Thời gian học được ghi nhận theo thời gian thực.');
       }
 
-      // Active Effects
+      document.getElementById('pomodoroConfig').textContent = `${data.pomodoroStudy} / ${data.pomodoroBreak} phút`;
       renderActiveEffects();
     }
 
@@ -984,30 +1233,25 @@
     // STREAK DAYS UPDATE
     // ================================================================
     function updateStreakDays() {
-      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-      // Check if today already counted
-      if (data.lastStudyDate === today) return;
+      ensureTodayStudyData();
+      const today = getLocalDateKey();
+      if ((data.todayStudySeconds || 0) < 3600 || data.lastStudyDate === today) return;
 
-      // If lastStudyDate is yesterday, continue streak
       if (data.lastStudyDate) {
-        const last = new Date(data.lastStudyDate);
         const yesterday = new Date();
+        yesterday.setHours(0, 0, 0, 0);
         yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayStr = yesterday.toISOString().split('T')[0];
+        const yesterdayStr = getLocalDateKey(yesterday);
         if (data.lastStudyDate === yesterdayStr) {
-          // consecutive day
           data.streakDays += 1;
         } else {
-          // gap -> reset streak
-          data.streakDays = 0;
+          data.streakDays = 1;
         }
       } else {
-        // first time
-        data.streakDays = 0;
+        data.streakDays = 1;
       }
+
       data.lastStudyDate = today;
-      saveData();
-      updateDashboard();
     }
 
     // ================================================================
@@ -1540,90 +1784,128 @@
       }
     }
 
+    function syncCountUpTimer() {
+      if (!data.timerRunning || !data.sessionStart) return false;
+      const now = Date.now();
+      const deltaSeconds = Math.floor((now - data.sessionStart) / 1000);
+      if (deltaSeconds <= 0) return false;
+      const syncedUntil = data.sessionStart + deltaSeconds * 1000;
+      addStudyTimeRange(data.sessionStart, syncedUntil);
+      data.timerSeconds += deltaSeconds;
+      data.elapsedSeconds = data.timerSeconds;
+      data.sessionStart = syncedUntil;
+      saveData();
+      return true;
+    }
+
+    function ensureCountUpInterval() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        syncCountUpTimer();
+        updateDashboard();
+      }, 1000);
+    }
+
     function startCountUp() {
       if (data.timerRunning) return;
       data.timerRunning = true;
       data.timerPaused = false;
       data.sessionStart = Date.now();
-      data.elapsedSeconds = data.timerSeconds;
+      data.timerMode = 'countup';
       saveData();
-      if (timerInterval) clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        if (!data.timerRunning) return;
-        const now = Date.now();
-        const delta = Math.floor((now - data.sessionStart) / 1000);
-        data.timerSeconds = data.elapsedSeconds + delta;
-        if (data.timerSeconds >= 3600) {
-          const addHours = Math.floor(data.timerSeconds / 3600);
-          data.hours += addHours;
-          data.lifetimeHours += addHours;
-          data.drawTickets += addHours;
-          data.timerSeconds = data.timerSeconds % 3600;
-          data.elapsedSeconds = 0;
-          data.sessionStart = Date.now();
-          addHistory({ type: 'progress', text: `⏱️ +${addHours}h học · +${addHours} Vé quay` });
+      ensureCountUpInterval();
+      updateDashboard();
+    }
 
-          // Cập nhật streak ngày nếu tổng số giờ trong ngày đạt ít nhất 1h
-          updateStreakDays();
-        }
+    function syncPomodoroTimer() {
+      if (!data.pomodoroActive) return false;
+      if (!data.pomodoroLastTick) {
+        data.pomodoroLastTick = Date.now();
         saveData();
+        return false;
+      }
+
+      const now = Date.now();
+      let deltaSeconds = Math.floor((now - data.pomodoroLastTick) / 1000);
+      if (deltaSeconds <= 0) return false;
+
+      let cursor = data.pomodoroLastTick;
+      let completedStudySessions = 0;
+      let completedBreaks = 0;
+
+      while (deltaSeconds > 0) {
+        const step = Math.min(deltaSeconds, data.pomodoroRemaining);
+        if (data.pomodoroPhase === 'study') {
+          addStudyTimeRange(cursor, cursor + step * 1000);
+        }
+        data.pomodoroRemaining -= step;
+        cursor += step * 1000;
+        deltaSeconds -= step;
+
+        if (data.pomodoroRemaining <= 0) {
+          if (data.pomodoroPhase === 'study') {
+            data.pomodoroPhase = 'break';
+            data.pomodoroRemaining = data.pomodoroBreak * 60;
+            completedStudySessions += 1;
+            addHistory({ type: 'pomodoro', text: '✅ Hoàn thành phiên học' });
+          } else {
+            data.pomodoroPhase = 'study';
+            data.pomodoroRemaining = data.pomodoroStudy * 60;
+            completedBreaks += 1;
+            addHistory({ type: 'pomodoro', text: '✅ Hoàn thành giải lao' });
+          }
+        }
+      }
+
+      if (completedStudySessions === 1) showToast('🍅 Nghỉ giải lao', 'Hoàn thành phiên học!');
+      else if (completedStudySessions > 1) showToast('🍅 Pomodoro', `Đã hoàn thành ${completedStudySessions} phiên học.`);
+      if (completedBreaks === 1) showToast('📚 Học tiếp', 'Kết thúc giải lao, quay lại học!');
+      else if (completedBreaks > 1) showToast('📚 Pomodoro', `Đã kết thúc ${completedBreaks} lần nghỉ.`);
+
+      data.pomodoroLastTick = cursor;
+      saveData();
+      return true;
+    }
+
+    function ensurePomodoroInterval() {
+      if (pomodoroInterval) clearInterval(pomodoroInterval);
+      pomodoroInterval = setInterval(() => {
+        syncPomodoroTimer();
         updateDashboard();
       }, 1000);
-      updateDashboard();
     }
 
     function startPomodoro() {
       if (data.pomodoroActive) return;
       data.pomodoroActive = true;
-      data.pomodoroPhase = 'study';
-      data.pomodoroRemaining = data.pomodoroStudy * 60;
+      data.timerMode = 'pomodoro';
+      if (!data.pomodoroRemaining || data.pomodoroRemaining <= 0) {
+        data.pomodoroPhase = 'study';
+        data.pomodoroRemaining = data.pomodoroStudy * 60;
+      }
+      data.pomodoroLastTick = Date.now();
       saveData();
       updateDashboard();
-      if (pomodoroInterval) clearInterval(pomodoroInterval);
-      pomodoroInterval = setInterval(() => {
-        if (!data.pomodoroActive) return;
-        data.pomodoroRemaining--;
-        if (data.pomodoroRemaining <= 0) {
-          if (data.pomodoroPhase === 'study') {
-            data.pomodoroPhase = 'break';
-            data.pomodoroRemaining = data.pomodoroBreak * 60;
-            showToast('🍅 Nghỉ giải lao', 'Hoàn thành phiên học!');
-            addHistory({ type: 'pomodoro', text: '✅ Hoàn thành phiên học' });
-            // Kiểm tra streak sau mỗi phiên học (có thể cộng dồn giờ)
-            // Đơn giản: sau mỗi phiên học, nếu tổng giờ trong ngày >=1 thì update streak
-            // Nhưng để đơn giản, ta sẽ kiểm tra khi timer đạt 1h (phần countup đã có)
-          } else {
-            data.pomodoroPhase = 'study';
-            data.pomodoroRemaining = data.pomodoroStudy * 60;
-            showToast('📚 Học tiếp', 'Kết thúc giải lao, quay lại học!');
-            addHistory({ type: 'pomodoro', text: '✅ Hoàn thành giải lao' });
-          }
-          saveData();
-        }
-        updateDashboard();
-      }, 1000);
+      ensurePomodoroInterval();
     }
 
     function pauseTimer() {
       const mode = document.querySelector('input[name="timerMode"]:checked').value;
       if (mode === 'countup') {
         if (data.timerRunning) {
+          syncCountUpTimer();
           data.timerRunning = false;
           data.timerPaused = true;
-          if (data.sessionStart) {
-            const now = Date.now();
-            const delta = Math.floor((now - data.sessionStart) / 1000);
-            data.timerSeconds = data.elapsedSeconds + delta;
-            data.elapsedSeconds = data.timerSeconds;
-            data.sessionStart = null;
-          }
+          data.sessionStart = null;
           if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
           saveData();
           updateDashboard();
         }
       } else {
         if (data.pomodoroActive) {
+          syncPomodoroTimer();
           data.pomodoroActive = false;
+          data.pomodoroLastTick = null;
           if (pomodoroInterval) { clearInterval(pomodoroInterval); pomodoroInterval = null; }
           saveData();
           updateDashboard();
@@ -1647,6 +1929,7 @@
         data.pomodoroActive = false;
         data.pomodoroPhase = 'study';
         data.pomodoroRemaining = data.pomodoroStudy * 60;
+        data.pomodoroLastTick = null;
         saveData();
         updateDashboard();
       }
@@ -1658,19 +1941,18 @@
     document.querySelectorAll('input[name="timerMode"]').forEach(radio => {
       radio.addEventListener('change', function() {
         const mode = this.value;
+        data.timerMode = mode;
         if (mode === 'pomodoro') {
           document.getElementById('pomodoroSettings').style.display = 'flex';
           pauseTimer();
-          resetTimer();
-          data.pomodoroRemaining = data.pomodoroStudy * 60;
-          data.pomodoroPhase = 'study';
+          if (!data.pomodoroRemaining) data.pomodoroRemaining = data.pomodoroStudy * 60;
           updateDashboard();
         } else {
           document.getElementById('pomodoroSettings').style.display = 'none';
           pauseTimer();
-          resetTimer();
           updateDashboard();
         }
+        saveData();
       });
     });
 
@@ -1727,7 +2009,7 @@
       const spinBtn = document.getElementById('spinCenterBtn');
       if (spinBtn) spinBtn.disabled = true;
       if (highlightInterval) { clearInterval(highlightInterval); highlightInterval = null; }
-      if (document.querySelector('input[name="timerMode"]:checked').value === 'pomodoro') {
+      if (data.timerMode === 'pomodoro' && !data.pomodoroRemaining) {
         data.pomodoroRemaining = data.pomodoroStudy * 60;
         data.pomodoroPhase = 'study';
       }
@@ -1735,6 +2017,7 @@
       if (!data.lastStudyDate) {
         data.lastStudyDate = null;
       }
+      ensureTodayStudyData();
       saveData();
     }
 
@@ -1755,8 +2038,26 @@
     // DOM READY
     // ================================================================
     document.addEventListener('DOMContentLoaded', function() {
+      const activeModeInput = document.querySelector(`input[name="timerMode"][value="${data.timerMode || 'countup'}"]`);
+      if (activeModeInput) activeModeInput.checked = true;
+      document.getElementById('pomodoroSettings').style.display = (data.timerMode === 'pomodoro') ? 'flex' : 'none';
+      document.getElementById('pomodoroStudy').value = data.pomodoroStudy;
+      document.getElementById('pomodoroBreak').value = data.pomodoroBreak;
+
       updateMotivation();
       refreshAll();
+
+      if (data.timerRunning) {
+        if (!data.sessionStart) data.sessionStart = Date.now();
+        syncCountUpTimer();
+        ensureCountUpInterval();
+      }
+      if (data.pomodoroActive) {
+        if (!data.pomodoroLastTick) data.pomodoroLastTick = Date.now();
+        syncPomodoroTimer();
+        ensurePomodoroInterval();
+      }
+      updateDashboard();
 
       // Timer controls
       document.getElementById('timerToggleBtn').onclick = () => {
@@ -1770,6 +2071,7 @@
         }
       };
       document.getElementById('timerResetBtn').onclick = resetTimer;
+      document.getElementById('refreshQuoteBtn').onclick = updateMotivation;
 
       // Pomodoro apply
       document.getElementById('applyPomodoroBtn').onclick = function() {
@@ -1780,6 +2082,7 @@
         if (document.querySelector('input[name="timerMode"]:checked').value === 'pomodoro') {
           data.pomodoroRemaining = study * 60;
           data.pomodoroPhase = 'study';
+          data.pomodoroLastTick = data.pomodoroActive ? Date.now() : null;
         }
         saveData();
         updateDashboard();
@@ -1790,7 +2093,7 @@
       // Vault toggle
       document.getElementById('vaultToggle').onclick = function() {
         const content = document.getElementById('vaultContent');
-        const isOpen = content.classList.toggle('open');
+        content.classList.toggle('open');
         this.classList.toggle('open');
       };
 
@@ -1853,6 +2156,11 @@
       document.getElementById('resetBtn').onclick = resetData;
 
       buildWheelGrid();
+    });
+    window.addEventListener('beforeunload', () => {
+      if (data.timerRunning) syncCountUpTimer();
+      if (data.pomodoroActive) syncPomodoroTimer();
+      saveData();
     });
   </script>
 </body>
